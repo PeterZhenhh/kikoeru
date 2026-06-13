@@ -1,0 +1,18 @@
+{
+  "name": "unikikoeru",
+  "compatibility_date": "2026-01-20",
+  "main": "./_worker.js",
+  "assets": {
+    "directory": "./",
+    "binding": "ASSETS",
+    "run_worker_first": true,
+    "not_found_handling": "none",
+    "html_handling": "auto-trailing-slash"
+  },
+  "dev": {
+    "port": 8080
+  },
+  "compatibility_flags": [
+    "nodejs_compat"
+  ]
+}

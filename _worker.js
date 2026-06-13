@@ -1,0 +1,1 @@
+export { default } from "./src/entrypoint/index_workerd.ts"

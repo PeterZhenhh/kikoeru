@@ -1,0 +1,23 @@
+{
+  "caches": [
+    {
+      "source": "/",
+      "cacheTtl": 0
+    },
+    {
+      "source": "/*",
+      "cacheTtl": 0
+    }
+  ],
+  "cloudFunctions": {
+    "nodejs": {
+      "maxDuration": 120
+    },
+    "python": {
+      "maxDuration": 120
+    },
+    "go": {
+      "maxDuration": 120
+    }
+  }
+}

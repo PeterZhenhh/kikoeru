@@ -1,0 +1,27 @@
+# This file describes a Fastly Compute package. To learn more visit:
+# https://www.fastly.com/documentation/reference/compute/fastly-toml
+
+authors = [""]
+description = "Web & WebSocket relay service"
+language = "javascript"
+manifest_version = 3
+name = "unikikoeru"
+service_id = "kZhdFewnV1c3FldWMojvyE"
+
+[local_server]
+
+  [local_server.kv_stores]
+
+    [local_server.kv_stores.unikikoeru]
+      file = "./static-publisher/kvstore.json"
+      format = "json"
+
+[scripts]
+  build = "npm run build-fastly"
+  post_init = "npm install"
+
+[setup]
+
+  [setup.kv_stores]
+
+    [setup.kv_stores.unikikoeru]

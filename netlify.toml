@@ -1,0 +1,14 @@
+[[edge_functions]]
+function = "index"
+path = "/*"
+
+[build]
+edge_functions = "dist"
+command = "yarn build-ntl"
+publish = "public"
+
+[dev]
+port = 8080
+publish = "dist"
+autoLaunch = true
+framework = "hono"

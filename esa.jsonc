@@ -1,0 +1,7 @@
+{
+  "name": "esa-template",
+  "installCommand": "yarn",
+  "assets": {
+    "directory": "./public"
+  }
+}

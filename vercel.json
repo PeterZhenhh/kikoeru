@@ -1,0 +1,8 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand":"yarn build-vc && cp -r public dist/public",
+  "bunVersion": "1.x",
+  "framework":"hono",
+  "regions": ["icn1"],
+  "outputDirectory": "dist"
+}

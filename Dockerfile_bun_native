@@ -1,0 +1,13 @@
+# ERR_TLS_CERT_ALTNAME_INVALID
+FROM oven/bun:1
+
+ARG TZ=Asia/Shanghai
+
+WORKDIR /app
+
+# 复制源码
+COPY . .
+RUN bun install --production
+EXPOSE 8080
+
+ENTRYPOINT ["bun", "run", "dev-bun"]

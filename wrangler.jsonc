@@ -1,0 +1,19 @@
+{
+  "name": "unikikoeru",
+  "pages_build_output_dir": "./",
+  "compatibility_date": "2026-02-02",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "upload_source_maps": true,
+  "send_metrics": false,
+  "placement": {
+    "mode": "smart"
+  },
+  "dev": {
+    "port": 8080
+  },
+  "vars": {
+    // "PAGES_WRANGLER_MAJOR_VERSION": 4
+  }
+}
