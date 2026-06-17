@@ -1,10 +1,10 @@
 import type { RemoteSearchParams } from "@/types/api";
 import type { RemoteWork } from "@/types/workMeta"
+import type { AppEnv } from "../../types/hono.ts";
 import { tryGetContext } from 'hono/context-storage'
 import * as cheerio from "cheerio";
 import cvMap from "./cvMap.json" with { type: "json" };
 import circleMap from "./circleMap.json" with { type: "json" };
-import { AppEnv } from "../../types/hono.ts";
 
 type SearchParms = {
     // /page/1
@@ -16,7 +16,7 @@ type SearchParms = {
 }
 
 const getRemoteDomain = () => {
-    return tryGetContext<AppEnv>()?.env?.rprx_japaneseasmr || "https://jpasmr.site.zpeter.eu.org" || "https://japaneseasmr.com"
+    return tryGetContext<AppEnv>()?.env?.rprx_japaneseasmr || "https://japaneseasmr.com"
 }
 
 
@@ -40,8 +40,7 @@ const urlByCv = (clientSP: RemoteSearchParams): URL | null => {
 const urlByCircle = (clientSP: RemoteSearchParams): URL | null => {
     if (clientSP.searchType != "circle") return null
     if (!clientSP.searchKeyword) return null
-    // const map = circleMap as Record<string, string>;
-    const map={}
+    const map = circleMap as Record<string, string>;
     const v = map[clientSP.searchKeyword]
     if (!v) {
         return null;

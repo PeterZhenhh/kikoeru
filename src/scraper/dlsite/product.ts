@@ -1,5 +1,7 @@
 import type { WorkMeta } from "@/types/workMeta"
 import type { WorkInfo } from "@/types/api";
+import type { AppEnv } from "../../types/hono.ts";
+import { tryGetContext } from 'hono/context-storage'
 import * as jNumCoder from "../../utils/jNumCoder"
 import * as objCoder from "../../utils/objCoder"
 
@@ -12,6 +14,10 @@ type VoiceBy = {
 
 type genres = { name: string, id: number, search_val: string, name_base: string }
 
+const getRemoteDomain = () => {
+    return tryGetContext<AppEnv>()?.env?.rprx_dlsite || "https://www.dlsite.com"
+}
+
 export const fetchWorkMeta = async (jFullNumber: string): Promise<WorkMeta> => {
     return (await fetchWorkMeta1(jFullNumber)) ?? (await fetchWorkMeta2(jFullNumber)) ?? ({ jFullNumber }) as WorkMeta
 }
@@ -20,7 +26,7 @@ export const fetchWorkMeta1 = async (jFullNumber: string): Promise<WorkMeta | nu
     let rawData: Record<string, any> = ({ jFullNumber })
     let retData = ({ jFullNumber }) as WorkMeta
     try {
-        const url = `https://www.dlsite.com/maniax/api/=/product.json?workno=${jFullNumber.toUpperCase()}`
+        const url = `getRemoteDomain()/maniax/api/=/product.json?workno=${jFullNumber.toUpperCase()}`
         rawData = (await (await fetch(url, {
             headers: {
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
@@ -62,7 +68,7 @@ export const fetchWorkMeta2 = async (jFullNumber: string): Promise<WorkMeta | nu
     let rawData: Record<string, any> = ({ jFullNumber })
     let retData = ({ jFullNumber }) as WorkMeta
     try {
-        const url = `https://www.dlsite.com/maniax/product/info/ajax?product_id=${jFullNumber.toUpperCase()}`
+        const url = `getRemoteDomain()/maniax/product/info/ajax?product_id=${jFullNumber.toUpperCase()}`
         rawData = (await (await fetch(url, {
             headers: {
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
@@ -143,7 +149,7 @@ export const fullFillWorkInfo = ({ jFullNumber, workTitle = "", circleName = "\0
         duration: 0,
         source_type: "DLSITE",
         source_id: jFullNumber,
-        source_url: `https://www.dlsite.com/maniax/work/=/product_id/${jFullNumber}.html`,
+        source_url: `getRemoteDomain()/maniax/work/=/product_id/${jFullNumber}.html`,
         userRating: null,
         review_text: null,
         progress: null,

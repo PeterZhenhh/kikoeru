@@ -113,7 +113,8 @@ type ConfiguredEnv = {
   BACKEND_DOMAINS: string
   FRONTEND_DOMAINS: string
   ORIGIN_DOMAIN: string
-  rprx_japaneseasmr: string
+  rprx_japaneseasmr: URL["origin"]
+  rprx_dlsite: URL["origin"]
 
 }
 

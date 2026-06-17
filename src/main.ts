@@ -12,7 +12,7 @@ import { fullFillWorkInfo, fetchWorkMeta } from "./scraper/dlsite/product.ts"
 import searchRemoteWorks from "./scraper/search.ts"
 
 const app = new Hono<AppEnv>().basePath('/api');
-// app.use(contextStorage())
+app.use(contextStorage())
 
 app.all("*", async (c, next) => {
   console.log(c.req.method, c.req.url)
