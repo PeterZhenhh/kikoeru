@@ -113,6 +113,7 @@ type ConfiguredEnv = {
   BACKEND_DOMAINS: string
   FRONTEND_DOMAINS: string
   ORIGIN_DOMAIN: string
+  rprx_japaneseasmr: string
 
 }
 

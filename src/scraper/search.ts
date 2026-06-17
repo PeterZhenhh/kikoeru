@@ -1,9 +1,13 @@
 import type { RemoteSearchParams, RespWorks, WorkInfo } from "@/types/api";
 import search_jasmr from "./jasmr/search";
+import search_japaneseasmr from "./japaneseasmr/search";
 import { fullFillWorkInfo, fetchWorkMeta } from "./dlsite/product";
 
 export default async (params: RemoteSearchParams): Promise<RespWorks> => {
-    const dataSources = [search_jasmr(params)];
+    const dataSources = [
+        search_jasmr(params),
+        search_japaneseasmr(params)
+    ]
 
     const results = await Promise.all(dataSources);
 

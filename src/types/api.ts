@@ -49,7 +49,7 @@ type SearchWorkType =
     "keyword"
 
 export type ClientSearchParams = {
-    order: "release" | "created_at" | "rating" | "dl_count" | "price" | "rate_average_2dp" | "review_count" | "id" | "nsfw" | "random"
+    order: "release" | "created_at" | "rating" | "dl_count" | "price" | "rate_average_2dp" | "review_count" | "id" | "nsfw" | "random" | "updated_at" | "userRating"
     sort: "asc" | "desc"
     page: number
     subtitle: 0 | 1

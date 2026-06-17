@@ -1,7 +1,8 @@
 import type { AppEnv } from "./types/hono.ts";
-import type { RemoteSearchParams, SearchWorkParam } from "./types/api.ts"
+import type { RemoteSearchParams, RespWorks, SearchWorkParam } from "./types/api.ts"
 import type { ClientSearchParams } from "./types/api.ts";
 import { Hono } from "hono/tiny";
+import { contextStorage } from 'hono/context-storage'
 import { showRoutes } from 'hono/dev'
 import * as objCoder from "./utils/objCoder.ts"
 import * as jNumCoder from "./utils/jNumCoder.ts"
@@ -11,6 +12,7 @@ import { fullFillWorkInfo, fetchWorkMeta } from "./scraper/dlsite/product.ts"
 import searchRemoteWorks from "./scraper/search.ts"
 
 const app = new Hono<AppEnv>().basePath('/api');
+app.use(contextStorage())
 
 app.all("*", async (c, next) => {
   console.log(c.req.method, c.req.url)
@@ -41,6 +43,21 @@ app.get("/health", async (c, next) => {
   return c.text("OK")
 });
 
+// 搜索推荐列表
+app.get("/tags", async (c, next) => {
+  return c.json([])
+});
+
+app.get("/circles", async (c, next) => {
+  return c.json([])
+});
+
+app.get("/vas", async (c, next) => {
+  return c.json([])
+});
+
+
+
 
 
 // 获取作品信息
@@ -63,12 +80,10 @@ app.get("/tracks/:jCode", async (c, next) => {
 });
 
 
-//#region 
-// 作品搜索
 
-// /api/works
 const SearchSchema: z.ZodType<ClientSearchParams> = z.object({
   order: z.enum([
+    // works
     "release",
     "created_at",
     "rating",
@@ -78,7 +93,10 @@ const SearchSchema: z.ZodType<ClientSearchParams> = z.object({
     "review_count",
     "id",
     "nsfw",
-    "random"
+    "random",
+    // review
+    "updated_at",
+    "userRating",
   ]).default("created_at"),
   sort: z.enum(["asc", "desc"]).default("desc"),
   page: z.coerce.number().int().min(1).default(1),
@@ -86,6 +104,20 @@ const SearchSchema: z.ZodType<ClientSearchParams> = z.object({
     z.union([z.literal(0), z.literal(1)])
   ).default(0)
 })
+
+//收藏
+app.get("/review", zValidator("query", SearchSchema), async (c, next) => {
+  const { order, sort, page } = c.req.valid("query")
+  const ret = {
+    works: [],
+    pagination: { currentPage: page, pageSize: 0, totalCount: 0 }
+  } as RespWorks
+  return c.json(ret)
+});
+
+//#region 
+// 作品搜索
+// 主页探索
 app.get("/works", zValidator("query", SearchSchema), async (c, next) => {
   const { order, sort, page, subtitle } = c.req.valid("query")
 
@@ -114,6 +146,8 @@ app.get("/:field{circle|tag|va}s/:data/works", zValidator("query", SearchSchema)
       break;
     case "va":
       query = objCoder.decode(data)
+      console.log(query);
+
       break
     default:
       throw new Error(`Invalid field: ${field}`)
@@ -131,7 +165,7 @@ app.get("/search/:keyword", zValidator("query", SearchSchema), async (c, next) =
 })
 
 // 作品聚合搜索
-const searchAllWorks = async (params: RemoteSearchParams) => {
+const searchAllWorks = async (params: RemoteSearchParams): Promise<RespWorks> => {
   switch (params.searchType) {
     case "circle":
       console.log("社团搜索", params.searchKeyword)
