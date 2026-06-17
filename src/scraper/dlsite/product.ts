@@ -26,7 +26,7 @@ export const fetchWorkMeta1 = async (jFullNumber: string): Promise<WorkMeta | nu
     let rawData: Record<string, any> = ({ jFullNumber })
     let retData = ({ jFullNumber }) as WorkMeta
     try {
-        const url = `getRemoteDomain()/maniax/api/=/product.json?workno=${jFullNumber.toUpperCase()}`
+        const url = `${getRemoteDomain()}/maniax/api/=/product.json?workno=${jFullNumber.toUpperCase()}`
         rawData = (await (await fetch(url, {
             headers: {
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
@@ -68,7 +68,7 @@ export const fetchWorkMeta2 = async (jFullNumber: string): Promise<WorkMeta | nu
     let rawData: Record<string, any> = ({ jFullNumber })
     let retData = ({ jFullNumber }) as WorkMeta
     try {
-        const url = `getRemoteDomain()/maniax/product/info/ajax?product_id=${jFullNumber.toUpperCase()}`
+        const url = `${getRemoteDomain()}/maniax/product/info/ajax?product_id=${jFullNumber.toUpperCase()}`
         rawData = (await (await fetch(url, {
             headers: {
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
@@ -149,7 +149,7 @@ export const fullFillWorkInfo = ({ jFullNumber, workTitle = "", circleName = "\0
         duration: 0,
         source_type: "DLSITE",
         source_id: jFullNumber,
-        source_url: `getRemoteDomain()/maniax/work/=/product_id/${jFullNumber}.html`,
+        source_url: `${getRemoteDomain()}/maniax/work/=/product_id/${jFullNumber}.html`,
         userRating: null,
         review_text: null,
         progress: null,
