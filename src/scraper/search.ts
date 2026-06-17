@@ -6,7 +6,7 @@ import { fullFillWorkInfo, fetchWorkMeta } from "./dlsite/product";
 export default async (params: RemoteSearchParams): Promise<RespWorks> => {
     const dataSources = [
         search_jasmr(params),
-        search_japaneseasmr(params)
+        // search_japaneseasmr(params)
     ]
 
     const results = await Promise.all(dataSources);
