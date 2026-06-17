@@ -1,6 +1,6 @@
 // Entrypoint for Deno Deploy
 import { serveStatic, getConnInfo } from "hono/deno";
-import app from "../base.ts";
+import app from "../main.ts";
 import type { AppEnv } from "../types/hono.ts";
 
 const PORT = parseInt(Deno.env.get("PORT") ?? "8080")

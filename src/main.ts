@@ -1,13 +1,13 @@
-import type { AppEnv } from "./types/hono";
-import type { RemoteSearchParams, SearchWorkParam } from "./types/api"
-import type { ClientSearchParams } from "./types/api";
+import type { AppEnv } from "./types/hono.ts";
+import type { RemoteSearchParams, SearchWorkParam } from "./types/api.ts"
+import type { ClientSearchParams } from "./types/api.ts";
 import { Hono } from "hono/tiny";
 import { showRoutes } from 'hono/dev'
-import * as objCoder from "./utils/objCoder"
-import * as jNumCoder from "./utils/jNumCoder"
+import * as objCoder from "./utils/objCoder.ts"
+import * as jNumCoder from "./utils/jNumCoder.ts"
 import * as z from 'zod'
 import { zValidator } from '@hono/zod-validator'
-import { fullFillWorkInfo, fetchWorkMeta } from "./scraper/dlsite/product"
+import { fullFillWorkInfo, fetchWorkMeta } from "./scraper/dlsite/product.ts"
 import searchRemoteWorks from "./scraper/search.ts"
 
 const app = new Hono<AppEnv>().basePath('/api');

@@ -12,7 +12,11 @@ type VoiceBy = {
 
 type genres = { name: string, id: number, search_val: string, name_base: string }
 
-export const fetchWorkMeta = async (jFullNumber: string): Promise<WorkMeta> => {
+export const fetchWorkMeta = async (jFullNumber: string): Promise<WorkMeta | null> => {
+    return (await fetchWorkMeta1(jFullNumber)) ?? (await fetchWorkMeta2(jFullNumber)) ?? ({ jFullNumber }) as WorkMeta
+}
+
+export const fetchWorkMeta1 = async (jFullNumber: string): Promise<WorkMeta | null> => {
     let rawData: Record<string, any> = ({ jFullNumber })
     let retData = ({ jFullNumber }) as WorkMeta
     try {
@@ -25,11 +29,11 @@ export const fetchWorkMeta = async (jFullNumber: string): Promise<WorkMeta> => {
             }
         })).json())[0]
         if (!rawData) {
-            return retData
+            return null
         }
     } catch (error) {
         console.error(error)
-        return retData
+        return null
     }
 
     retData = {
@@ -50,6 +54,46 @@ export const fetchWorkMeta = async (jFullNumber: string): Promise<WorkMeta> => {
         tags: (rawData.genres ?? []).map((genre: genres) => ({
             id: objCoder.encode({ t: "tag", v: genre.name_base }), name: genre.name || genre.name_base
         }) as WorkMeta["tags"][number])
+    }
+    return retData
+}
+
+export const fetchWorkMeta2 = async (jFullNumber: string): Promise<WorkMeta | null> => {
+    let rawData: Record<string, any> = ({ jFullNumber })
+    let retData = ({ jFullNumber }) as WorkMeta
+    try {
+        const url = `https://www.dlsite.com/maniax/product/info/ajax?product_id=${jFullNumber.toUpperCase()}`
+        rawData = (await (await fetch(url, {
+            headers: {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+                "accept-language": "zh-CN,zh;q=0.9",
+                "cookie": "locale=zh-cn"
+            }
+        })).json())[jFullNumber.toUpperCase()]
+        if (!rawData) {
+            return null
+        }
+    } catch (error) {
+        console.error(error)
+        return null
+    }
+
+    retData = {
+        jFullNumber: jFullNumber.toUpperCase(),
+        workTitle: rawData.work_name,
+        circleName: rawData.maker_id,
+        releaseDate: new Date(rawData.regist_date).toISOString().slice(0, 10),
+        vas: [],
+        cover: rawData.work_image?.slice(2),
+        language_editions: (rawData.dl_count_items ?? []).map((item: Record<string, any>) => ({
+            id: jNumCoder.toCode(item.workno),
+            lang: item.label,
+            title: item.workno,
+            source_id: item.workno,
+            is_original: false,
+            source_type: "DLSITE"
+        }) as WorkMeta["language_editions"][number]),
+        tags: []
     }
     return retData
 }
