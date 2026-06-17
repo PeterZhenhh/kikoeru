@@ -12,7 +12,7 @@ type VoiceBy = {
 
 type genres = { name: string, id: number, search_val: string, name_base: string }
 
-export const fetchWorkMeta = async (jFullNumber: string): Promise<WorkMeta | null> => {
+export const fetchWorkMeta = async (jFullNumber: string): Promise<WorkMeta> => {
     return (await fetchWorkMeta1(jFullNumber)) ?? (await fetchWorkMeta2(jFullNumber)) ?? ({ jFullNumber }) as WorkMeta
 }
 
