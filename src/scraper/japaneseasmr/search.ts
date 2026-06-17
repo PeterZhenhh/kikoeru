@@ -29,8 +29,7 @@ const urlByCv = (clientSP: RemoteSearchParams): URL | null => {
     if (clientSP.searchType != "va") return null
     if (!clientSP.searchKeyword) return null
 
-    // const map = cvMap as Record<string, string>;
-    const map={}
+    const map = cvMap as Record<string, string>;
     const v = map[clientSP.searchKeyword]
     if (!v) {
         return null;
