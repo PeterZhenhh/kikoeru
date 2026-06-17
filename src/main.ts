@@ -120,18 +120,8 @@ app.get("/review", zValidator("query", SearchSchema), async (c, next) => {
 // 主页探索
 app.get("/works", zValidator("query", SearchSchema), async (c, next) => {
   const { order, sort, page, subtitle } = c.req.valid("query")
-
-  const data = {
-    pagination: {
-      "currentPage": 1,
-      "pageSize": 20,
-      "totalCount": 1
-    },
-    works: [
-      fullFillWorkInfo(await fetchWorkMeta("RJ300204"))
-    ]
-  }
-  return c.json(data);
+  const query: SearchWorkParam = { t: "keyword", v: "" }
+  return c.json(await searchAllWorks({ searchType: query.t, searchKeyword: query.v, order, sort, page, subtitle }))
 });
 
 // 社团/标签/CV 搜索
