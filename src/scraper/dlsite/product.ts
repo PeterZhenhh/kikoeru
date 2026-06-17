@@ -27,6 +27,8 @@ export const fetchWorkMeta1 = async (jFullNumber: string): Promise<WorkMeta | nu
     let retData = ({ jFullNumber }) as WorkMeta
     try {
         const url = `${getRemoteDomain()}/maniax/api/=/product.json?workno=${jFullNumber.toUpperCase()}`
+        console.log(url);
+        
         rawData = (await (await fetch(url, {
             headers: {
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
@@ -69,6 +71,8 @@ export const fetchWorkMeta2 = async (jFullNumber: string): Promise<WorkMeta | nu
     let retData = ({ jFullNumber }) as WorkMeta
     try {
         const url = `${getRemoteDomain()}/maniax/product/info/ajax?product_id=${jFullNumber.toUpperCase()}`
+        console.log(url);
+        
         rawData = (await (await fetch(url, {
             headers: {
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
