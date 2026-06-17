@@ -35,10 +35,10 @@ export default async (params: RemoteSearchParams): Promise<RespWorks> => {
     return {
         pagination: {
             currentPage: params.page,
-            pageSize: results.reduce((sum, item) => sum + item.size, 0),
-            totalCount: results.reduce((sum, item) => sum + item.total, 0),
-            // pageSize:0,
-            // totalCount:1
+            // pageSize: results.reduce((sum, item) => sum + item.size, 0),
+            // totalCount: results.reduce((sum, item) => sum + item.total, 0),
+            pageSize: 0,
+            totalCount: results.reduce((sum, item) => sum + item.jFullNumber.length, 0) > 0 ? 1 : 0
         },
         works,
     };

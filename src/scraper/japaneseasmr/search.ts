@@ -140,6 +140,6 @@ const all = async (clientSP: RemoteSearchParams): Promise<{ jFullNums: string[],
 
     const lastPage = Math.max(...pages);
     ret.jFullNums = rjCodes
-    ret.totalCount = hasNext ? 14 * lastPage : 14 * (currentPage - 1) + rjCodes.length
+    ret.totalCount = hasNext ? 14 * lastPage : 14 * (Math.max(currentPage, 1) - 1) + rjCodes.length
     return ret
 }

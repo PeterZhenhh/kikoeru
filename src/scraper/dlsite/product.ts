@@ -28,7 +28,6 @@ export const fetchWorkMeta1 = async (jFullNumber: string): Promise<WorkMeta | nu
     try {
         const url = `${getRemoteDomain()}/maniax/api/=/product.json?workno=${jFullNumber.toUpperCase()}`
         console.log(url);
-        
         rawData = (await (await fetch(url, {
             headers: {
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
@@ -43,15 +42,22 @@ export const fetchWorkMeta1 = async (jFullNumber: string): Promise<WorkMeta | nu
         console.error(error)
         return null
     }
+    if (!Array.isArray(rawData.language_editions)) {
+        const tmp = []
+        for (const idx of Object.keys(rawData.language_editions)) {
+            tmp.push(rawData.language_editions[idx])
+        }
+        rawData.language_editions = tmp
+    }
 
     retData = {
         jFullNumber: rawData.workno,
         workTitle: rawData.product_name,
         circleName: rawData.maker_name,
         releaseDate: new Date(rawData.regist_date).toISOString().slice(0, 10),
-        vas: ((rawData.creaters?.voice_by) ?? []).map((item: VoiceBy) => item.name),
+        vas: ((rawData.creaters?.voice_by) || []).map((item: VoiceBy) => item.name),
         cover: `https://img.dlsite.jp/${rawData.image_main.relative_url}`,
-        language_editions: (rawData.language_editions ?? []).map((item: Record<string, any>) => ({
+        language_editions: (rawData.language_editions || []).map((item: Record<string, any>) => ({
             id: jNumCoder.toCode(item.workno),
             lang: item.label,
             title: `${item.label} ${item.workno}`,
@@ -59,7 +65,7 @@ export const fetchWorkMeta1 = async (jFullNumber: string): Promise<WorkMeta | nu
             is_original: false,
             source_type: "DLSITE"
         }) as WorkMeta["language_editions"][number]),
-        tags: (rawData.genres ?? []).map((genre: genres) => ({
+        tags: (rawData.genres || []).map((genre: genres) => ({
             id: objCoder.encode({ t: "tag", v: genre.name_base }), name: genre.name || genre.name_base
         }) as WorkMeta["tags"][number])
     }
@@ -72,7 +78,7 @@ export const fetchWorkMeta2 = async (jFullNumber: string): Promise<WorkMeta | nu
     try {
         const url = `${getRemoteDomain()}/maniax/product/info/ajax?product_id=${jFullNumber.toUpperCase()}`
         console.log(url);
-        
+
         rawData = (await (await fetch(url, {
             headers: {
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
@@ -95,7 +101,7 @@ export const fetchWorkMeta2 = async (jFullNumber: string): Promise<WorkMeta | nu
         releaseDate: new Date(rawData.regist_date).toISOString().slice(0, 10),
         vas: [],
         cover: rawData.work_image?.slice(2),
-        language_editions: (rawData.dl_count_items ?? []).map((item: Record<string, any>) => ({
+        language_editions: (rawData.dl_count_items || []).map((item: Record<string, any>) => ({
             id: jNumCoder.toCode(item.workno),
             lang: item.label,
             title: item.workno,
