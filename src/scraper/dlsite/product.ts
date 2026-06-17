@@ -132,8 +132,8 @@ export const fullFillWorkInfo = ({ jFullNumber, workTitle = "", circleName = "\0
         has_subtitle: false,
         create_date: releaseDate,
         vas: [
-            { id: objCoder.encode({ t: "circle", v: circleName }), name: `GP:${circleName}` },
-            ...vas.map(va => ({ id: objCoder.encode({ t: "va", v: va }), name: `VA:${va}` })),
+            ...vas.map(va => ({ id: objCoder.encode({ t: "va", v: va }), name: `${va}` })),
+            { id: objCoder.encode({ t: "circle", v: circleName }), name: `【${circleName}】` },
             ...tags
         ],
         tags: [],
