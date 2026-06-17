@@ -29,7 +29,8 @@ const urlByCv = (clientSP: RemoteSearchParams): URL | null => {
     if (clientSP.searchType != "va") return null
     if (!clientSP.searchKeyword) return null
 
-    const map = cvMap as Record<string, string>;
+    // const map = cvMap as Record<string, string>;
+    const map={}
     const v = map[clientSP.searchKeyword]
     if (!v) {
         return null;
@@ -40,7 +41,8 @@ const urlByCv = (clientSP: RemoteSearchParams): URL | null => {
 const urlByCircle = (clientSP: RemoteSearchParams): URL | null => {
     if (clientSP.searchType != "circle") return null
     if (!clientSP.searchKeyword) return null
-    const map = circleMap as Record<string, string>;
+    // const map = circleMap as Record<string, string>;
+    const map={}
     const v = map[clientSP.searchKeyword]
     if (!v) {
         return null;
