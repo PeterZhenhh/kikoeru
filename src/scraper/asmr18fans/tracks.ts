@@ -1,5 +1,7 @@
 import type { BaseTrackFile, TrackFuncParam } from "@/types/api"
+import type { AppEnv } from "../../types/hono.ts";
 import * as cheerio from "cheerio";
+import { tryGetContext } from 'hono/context-storage'
 
 export const tracks = async ({ jFullNumber }: TrackFuncParam['params']): Promise<BaseTrackFile[] | null> => {
     console.log(`Fetching tracks for ${jFullNumber} from asmr18fans...`);
@@ -28,7 +30,7 @@ export const tracks = async ({ jFullNumber }: TrackFuncParam['params']): Promise
 
     let ret: BaseTrackFile[] = []
     labels.forEach(label => {
-        ret.push({ fileName: label, fileUrl: `https://cdn3.cloudintech.net/file/${jFullNumber.toUpperCase()}/${label.replace(" ", "+")}.m3u8` })
+        ret.push({ fileName: label, fileUrl: `${tryGetContext<AppEnv>()?.env?.rprx_m3u8Cnv || ""}https://cdn3.cloudintech.net/file/${jFullNumber.toUpperCase()}/${label.replace(" ", "+")}.m3u8` })
     })
 
     return ret.length ? ret : null

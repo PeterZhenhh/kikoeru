@@ -12,9 +12,9 @@ export default async ({ jFullNumber }: TrackFuncParam['params']): Promise<TrackF
         });
 
     const tracks = await Promise.any([
-        // ignoreEmpty(tracks_asmr18fans({ jFullNumber })),
+        ignoreEmpty(tracks_asmr18fans({ jFullNumber })),
         // ignoreEmpty(tracks_jasmr({ jFullNumber })),
-        ignoreEmpty(tracks_japaneseasmr({ jFullNumber })),
+        // ignoreEmpty(tracks_japaneseasmr({ jFullNumber })),
         // ignoreEmpty(tracks_hentaiasmr({ jFullNumber })),
     ]).catch(() => null);
 
