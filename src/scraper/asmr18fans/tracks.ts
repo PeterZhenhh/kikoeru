@@ -8,6 +8,8 @@ export const tracks = async ({ jFullNumber }: TrackFuncParam['params']): Promise
     const url = `https://asmr18.fans/boys/${jFullNumber.toLowerCase()}`
     let html: string
     try {
+        console.log(url);
+        
         html = await (await fetch(url, {
             headers: {
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
@@ -30,7 +32,12 @@ export const tracks = async ({ jFullNumber }: TrackFuncParam['params']): Promise
 
     let ret: BaseTrackFile[] = []
     labels.forEach(label => {
-        ret.push({ fileName: label, fileUrl: `${tryGetContext<AppEnv>()?.env?.rprx_m3u8Cnv || ""}https://cdn3.cloudintech.net/file/${jFullNumber.toUpperCase()}/${label.replace(" ", "+")}.m3u8` })
+        ret.push(
+            {
+                fileName: label,
+                fileUrl: `${tryGetContext<AppEnv>()?.env?.rprx_m3u8Cnv || ""}https://cdn3.cloudintech.net/file/${jFullNumber.toUpperCase()}/${label.replace(" ", "+")}.m3u8`
+            }
+        )
     })
 
     return ret.length ? ret : null

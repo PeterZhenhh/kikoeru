@@ -1,1 +1,2 @@
-export {tracks} from "./tracks"
+export { tracks } from "./tracks"
+export { default as search } from "./search"

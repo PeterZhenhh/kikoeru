@@ -117,6 +117,8 @@ type ConfiguredEnv = {
   rprx_v_japaneseasmr: URL["origin"]
   rprx_dlsite: URL["origin"]
   rprx_m3u8Cnv: URL["href"]
+  rprx_hentaiasmr: URL["origin"]
+  rprx_asmr18fans: URL["origin"]
 
 }
 
