@@ -106,6 +106,8 @@ const all = async (clientSP: RemoteSearchParams): Promise<{ jFullNums: string[],
                 "referer": `${getRemoteDomain()}`
             }
         })).text()
+        console.log(html);
+        
     } catch (error) {
         console.error(error);
         return ret
