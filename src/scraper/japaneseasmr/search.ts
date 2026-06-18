@@ -100,14 +100,18 @@ const all = async (clientSP: RemoteSearchParams): Promise<{ jFullNums: string[],
     let ret: { totalCount: number, jFullNums: string[] } = { totalCount: 0, jFullNums: [] }
     try {
         console.log(url.href);
-        html = await (await fetch(url, {
+        const resp = await fetch(url, {
             headers: {
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
                 "referer": `${getRemoteDomain()}`
             }
-        })).text()
-        console.log(html);
-        
+        })
+        if (resp.status !== 200) {
+            console.log(`Japaneseasmr is blocked`);
+            return ret
+        }
+        html = await (resp).text()
+
     } catch (error) {
         console.error(error);
         return ret
