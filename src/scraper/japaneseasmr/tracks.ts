@@ -1,4 +1,6 @@
 import type { BaseTrackFile, TrackFuncParam } from "@/types/api"
+import type { AppEnv } from "../../types/hono.ts";
+import { tryGetContext } from 'hono/context-storage'
 async function exists(url: URL["href"]): Promise<boolean> {
     try {
         const res = await fetch(url, {
@@ -36,7 +38,7 @@ export const tracks = async ({ jFullNumber }: TrackFuncParam['params']): Promise
     if (await exists(m3u8)) {
         result.push({
             fileName: `${rj.toUpperCase()}.m3u8`,
-            fileUrl: m3u8,
+            fileUrl: `${tryGetContext<AppEnv>()?.env?.rprx_m3u8Cnv || ""}${tryGetContext<AppEnv>()?.env?.rprx_v_japaneseasmr || "https://v.weeab0o.xyz"}/${rj.toUpperCase()}.m3u8`,
         });
         return result;
     }
@@ -47,7 +49,7 @@ export const tracks = async ({ jFullNumber }: TrackFuncParam['params']): Promise
     if (await exists(firstMp3)) {
         result.push({
             fileName: `${rj.toUpperCase()}_1.mp3`,
-            fileUrl: firstMp3,
+            fileUrl: `${tryGetContext<AppEnv>()?.env?.rprx_m3u8Cnv || ""}${tryGetContext<AppEnv>()?.env?.rprx_v_japaneseasmr || "https://v.weeab0o.xyz"}/${rj.toUpperCase()}.mp3`,
         });
     } else {
         return null
@@ -63,7 +65,7 @@ export const tracks = async ({ jFullNumber }: TrackFuncParam['params']): Promise
 
         result.push({
             fileName: `${rj.toUpperCase()}_${i}.mp3`,
-            fileUrl: url,
+            fileUrl: `${tryGetContext<AppEnv>()?.env?.rprx_m3u8Cnv || ""}${tryGetContext<AppEnv>()?.env?.rprx_v_japaneseasmr || "https://v.weeab0o.xyz"}/${rj.toUpperCase()} ${i}.mp3`,
         });
     }
 
