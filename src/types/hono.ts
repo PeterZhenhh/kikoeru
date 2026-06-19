@@ -119,7 +119,7 @@ type ConfiguredEnv = {
   rprx_m3u8Cnv: URL["href"]
   rprx_hentaiasmr: URL["origin"]
   rprx_asmr18fans: URL["origin"]
-
+  rprx_general: URL["origin"]
 }
 
 export interface AppEnv extends Env {
