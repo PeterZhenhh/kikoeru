@@ -48,7 +48,9 @@ const urlByTag = (clientSP: RemoteSearchParams): URL | null => {
 }
 
 const urlByKeyword = (clientSP: RemoteSearchParams): URL => {
-    return new URL(`${getRemoteDomain()}/?s=${clientSP.searchKeyword}`)
+    if (clientSP.searchKeyword) return new URL(`${getRemoteDomain()}/?s=${clientSP.searchKeyword}`)
+    else return new URL(`${getRemoteDomain()}/`)
+
 }
 
 const all = async (clientSP: RemoteSearchParams): Promise<{ jFullNums: string[], totalCount: number }> => {

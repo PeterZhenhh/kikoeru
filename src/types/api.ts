@@ -4,7 +4,7 @@ export type TrackFuncParam = {
     params: {
         jFullNumber: string
     }
-    result: {
+    result: | {
         type: string,
         hash: string,
         title: string,
@@ -19,14 +19,25 @@ export type TrackFuncParam = {
         streamLowQualityUrl: string,
         duration: number,
         size: number
-    }[] | null
+    }
+    | {
+        type: "folder"
+        title: string
+        children: TrackFuncParam["result"][]
+    }
 }
 
 export type BaseTrackFile = {
+    type: "audio"
     fileName: string,
     fileUrl: URL["href"]
     duration?: number
     size?: number
+    hash?: string
+} | {
+    type: "folder",
+    fileName: string
+    children: BaseTrackFile[]
 }
 
 export type SearchWorkParam = {

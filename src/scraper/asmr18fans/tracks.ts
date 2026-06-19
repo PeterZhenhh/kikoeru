@@ -34,6 +34,7 @@ export const tracks = async ({ jFullNumber }: TrackFuncParam['params']): Promise
     labels.forEach(label => {
         ret.push(
             {
+                type:"audio",
                 fileName: `${label}_asmr18fans`,
                 fileUrl: `https://cdn3.cloudintech.net/file/${jFullNumber.toUpperCase()}/${label.replace(" ", "+")}.m3u8`
             }

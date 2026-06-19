@@ -3,6 +3,7 @@ import { search as search_jasmr } from "./jasmr";
 import { search as search_hentaiasmr } from "./hentaiasmr";
 import { search as search_japaneseasmr } from "./japaneseasmr";
 import { search as search_asmr18fans } from "./asmr18fans";
+import { search as search_asmrone } from "./asmrone";
 import { fullFillWorkInfo, fetchWorkMeta } from "./dlsite/product";
 import * as objCoder from "../utils/objCoder"
 
@@ -11,7 +12,8 @@ export default async (params: RemoteSearchParams): Promise<RespWorks> => {
         search_jasmr(params),
         search_japaneseasmr(params),
         search_hentaiasmr(params),
-        search_asmr18fans(params)
+        search_asmr18fans(params),
+        search_asmrone(params)
     ]
 
     const results = await Promise.all(dataSources);

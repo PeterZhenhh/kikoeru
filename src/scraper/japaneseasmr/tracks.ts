@@ -37,6 +37,7 @@ export const tracks = async ({ jFullNumber }: TrackFuncParam['params']): Promise
 
     if (await exists(m3u8)) {
         result.push({
+            type:"audio",
             fileName: `${rj.toUpperCase()}_japaneseasmr.m3u8`,
             fileUrl: `${tryGetContext<AppEnv>()?.env?.rprx_v_japaneseasmr || "https://v.weeab0o.xyz"}/${rj.toUpperCase()}.m3u8`,
         });
@@ -48,6 +49,7 @@ export const tracks = async ({ jFullNumber }: TrackFuncParam['params']): Promise
 
     if (await exists(firstMp3)) {
         result.push({
+            type:"audio",
             fileName: `${rj.toUpperCase()}_1_japaneseasmr.mp3`,
             fileUrl: `${tryGetContext<AppEnv>()?.env?.rprx_v_japaneseasmr || "https://v.weeab0o.xyz"}/${rj.toUpperCase()}.mp3`,
         });
@@ -64,6 +66,7 @@ export const tracks = async ({ jFullNumber }: TrackFuncParam['params']): Promise
         }
 
         result.push({
+            type:"audio",
             fileName: `${rj.toUpperCase()}_${i}_japaneseasmr.mp3`,
             fileUrl: `${tryGetContext<AppEnv>()?.env?.rprx_v_japaneseasmr || "https://v.weeab0o.xyz"}/${rj.toUpperCase()} ${i}.mp3`,
         });
