@@ -73,9 +73,12 @@ const all = async (clientSP: RemoteSearchParams): Promise<{ jFullNums: string[],
         case "id":
         case "created_at":
         case "release":
+        case "updated_at":
             params.orderby = "date"
             break;
         case "post_views":
+        case "rating":
+        case "userRating":
         case "rate_average_2dp":
             params.orderby = "post_views"
             break

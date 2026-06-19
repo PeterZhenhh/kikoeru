@@ -47,9 +47,12 @@ const all = async (clientSP: RemoteSearchParams, sizeLimit: number): Promise<{ j
                 case "id":
                 case "created_at":
                 case "release":
+                case "updated_at":
                     params.sort = "dateAscending"
                     break;
                 case "post_views":
+                case "rating":
+                case "userRating":
                 case "rate_average_2dp":
                     params.sort = "likesDescending"
                     break
@@ -70,9 +73,12 @@ const all = async (clientSP: RemoteSearchParams, sizeLimit: number): Promise<{ j
                 case "id":
                 case "created_at":
                 case "release":
+                case "updated_at":
                     params.sort = "dateDescending"
                     break;
                 case "post_views":
+                case "rating":
+                case "userRating":
                 case "rate_average_2dp":
                     params.sort = "likesAscending"
                     break
@@ -81,7 +87,6 @@ const all = async (clientSP: RemoteSearchParams, sizeLimit: number): Promise<{ j
                     params.sort = "viewsDescending"
                     break
                 case "nsfw":
-                    break
                 case "price":
                 case "random":
                 default:

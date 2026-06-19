@@ -4,6 +4,7 @@ import { search as search_hentaiasmr } from "./hentaiasmr";
 import { search as search_japaneseasmr } from "./japaneseasmr";
 import { search as search_asmr18fans } from "./asmr18fans";
 import { fullFillWorkInfo, fetchWorkMeta } from "./dlsite/product";
+import * as objCoder from "../utils/objCoder"
 
 export default async (params: RemoteSearchParams): Promise<RespWorks> => {
     const dataSources = [
@@ -32,9 +33,19 @@ export default async (params: RemoteSearchParams): Promise<RespWorks> => {
     const jInfo: Record<string, WorkInfo> = Object.fromEntries(entries);
 
     // 3. 拼 works（如果你需要）
-    const works: WorkInfo[] = jFullNumbers
+    let works: WorkInfo[] = jFullNumbers
         .map(jnum => jInfo[jnum])
         .filter(Boolean)
+        .filter(work => {
+            if (params.searchType == "va" || params.searchType == "circle" || params.searchType == "tag") {
+                for (const v of work.vas) {
+                    const raw = objCoder.decode(v.id)
+                    if (raw.t == params.searchType && raw.v.trim() == params.searchKeyword?.trim()) return true
+                }
+                return false
+            }
+            return true
+        })
         // 4. 重排序
         .sort((a, b) => {
             let c: number = 0;
@@ -49,6 +60,7 @@ export default async (params: RemoteSearchParams): Promise<RespWorks> => {
                 case "userRating":
                 case "rate_average_2dp":
                 case "post_views":
+                case "rating":
                     c = a.rate_average_2dp
                     d = b.rate_average_2dp
                     break
@@ -89,6 +101,16 @@ export default async (params: RemoteSearchParams): Promise<RespWorks> => {
                     return 0
             }
         })
+
+    // Full jNumber matching
+    if (params.searchType == "keyword") {
+        for (const work of works) {
+            if (params.searchKeyword?.trim().toUpperCase() === work.source_id.trim().toUpperCase()) {
+                works.unshift(work)
+                break
+            }
+        }
+    }
 
     return {
         pagination: {

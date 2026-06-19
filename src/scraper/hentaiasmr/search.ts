@@ -43,9 +43,12 @@ const all = async (clientSP: RemoteSearchParams): Promise<{ jFullNums: string[],
         case "id":
         case "created_at":
         case "release":
+        case "updated_at":
             params.filter = "latest"
             break;
         case "post_views":
+        case "rating":
+        case "userRating":
         case "rate_average_2dp":
             params.filter = "popular"
             break
@@ -91,6 +94,8 @@ const all = async (clientSP: RemoteSearchParams): Promise<{ jFullNums: string[],
     }
 
     const $ = cheerio.load(html);
+
+    // Empty result
     const hasNothingFound =
         $('h1.widget-title').filter((_, el) =>
             $(el).text().trim() === 'Nothing found'

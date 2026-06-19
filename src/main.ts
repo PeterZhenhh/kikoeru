@@ -87,6 +87,7 @@ const SearchSchema: z.ZodType<ClientSearchParams> = z.object({
     "release",
     "created_at",
     "post_views",
+    "rating",
     "dl_count",
     "price",
     "rate_average_2dp",

@@ -60,9 +60,12 @@ const all = async (clientSP: RemoteSearchParams): Promise<{ jFullNums: string[],
     if (!clientSP.searchKeyword) {
         switch (clientSP.order) {
             case "id":
+            case "updated_at":
             case "created_at":
             case "release":
             case "post_views":
+            case "rating":
+            case "userRating":
             case "rate_average_2dp":
             case "dl_count":
             case "review_count":

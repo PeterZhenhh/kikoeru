@@ -56,6 +56,7 @@ export type ClientSearchParams = {
     "created_at" |
     //  我的评价
     "post_views" |
+    "rating" |
     //  销售数量
     "dl_count" |
     //  出售价格
@@ -140,7 +141,7 @@ export type WorkInfo = {
         translation_status_for_translator: {};
     }
     work_attributes: string,
-    age_category:number,
+    age_category: number,
     age_category_string: string,
     duration: number,
     source_type: string,
