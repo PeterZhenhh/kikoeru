@@ -51,7 +51,20 @@ export const fetchWorkMeta1 = async (jFullNumber: string): Promise<WorkMeta | nu
     }
 
     retData = {
+        dl_count:
+            Object.values(rawData.rate_count_detail as Record<string, number>)
+                .reduce((sum, count) => sum + count, 0),
+        review_count:
+            Object.values(rawData.rate_count_detail as Record<string, number>)
+                .reduce((sum, count) => sum + count, 0),
         jFullNumber: rawData.workno,
+        age_category: rawData.age_category,
+        rate_average_2dp:
+            Object.entries(rawData.rate_count_detail as Record<string, number>)
+                .reduce(
+                    ([score, count], [rate, n]) => [score + Number(rate) * n, count + n], [0, 0])
+                .reduce((score, count) => score / count),
+        price: rawData.official_price,
         workTitle: rawData.product_name,
         circleName: rawData.maker_name,
         releaseDate: new Date(rawData.regist_date).toISOString().slice(0, 10),
@@ -96,6 +109,11 @@ export const fetchWorkMeta2 = async (jFullNumber: string): Promise<WorkMeta | nu
 
     retData = {
         jFullNumber: jFullNumber.toUpperCase(),
+        age_category: rawData.age_category,
+        rate_average_2dp: rawData.rate_average_2dp,
+        dl_count: rawData.dl_count,
+        review_count: rawData.rate_count,
+        price: rawData.official_price,
         workTitle: rawData.work_name,
         circleName: rawData.maker_id,
         releaseDate: new Date(rawData.regist_date).toISOString().slice(0, 10),
@@ -114,7 +132,7 @@ export const fetchWorkMeta2 = async (jFullNumber: string): Promise<WorkMeta | nu
     return retData
 }
 
-export const fullFillWorkInfo = ({ jFullNumber, workTitle = "", circleName = "\0", releaseDate = "\0", vas = [], cover = "//", language_editions = [], tags = [] }: WorkMeta): WorkInfo => {
+export const fullFillWorkInfo = ({ jFullNumber, workTitle = "", circleName = "\0", releaseDate = "", vas = [], cover = "//", language_editions = [], tags = [], age_category = 0, rate_average_2dp = 0, dl_count = 0, price = 0, review_count = 0 }: WorkMeta): WorkInfo => {
     return {
         id: jNumCoder.toCode(jFullNumber),
         title: workTitle || jFullNumber,
@@ -122,11 +140,11 @@ export const fullFillWorkInfo = ({ jFullNumber, workTitle = "", circleName = "\0
         name: circleName,
         nsfw: true,
         release: releaseDate,
-        dl_count: 0,
-        price: 0,
-        review_count: 0,
+        dl_count: dl_count,
+        price,
+        review_count,
         rate_count: 0,
-        rate_average_2dp: 0,
+        rate_average_2dp,
         rate_count_detail: [],
         rank: [],
         has_subtitle: false,
@@ -155,6 +173,7 @@ export const fullFillWorkInfo = ({ jFullNumber, workTitle = "", circleName = "\0
             translation_status_for_translator: {}
         },
         work_attributes: "",
+        age_category: age_category,
         age_category_string: "adult",
         duration: 0,
         source_type: "DLSITE",

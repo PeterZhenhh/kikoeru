@@ -1,10 +1,13 @@
 export type WorkMeta = {
     jFullNumber: string,
+    age_category: number,
     workTitle: string,
     circleName: string,
     releaseDate: string,
     vas: string[],
     cover: URL["href"],
+    dl_count: number,
+    review_count: number,
     language_editions: {
         // jCode
         id: number,
@@ -18,7 +21,9 @@ export type WorkMeta = {
         // objCoder.encode
         id: string,
         name: string
-    }[]
+    }[],
+    rate_average_2dp: number,
+    price: number
 }
 
 export type RemoteWork = {

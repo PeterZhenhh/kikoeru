@@ -49,7 +49,31 @@ type SearchWorkType =
     "keyword"
 
 export type ClientSearchParams = {
-    order: "release" | "created_at" | "rating" | "dl_count" | "price" | "rate_average_2dp" | "review_count" | "id" | "nsfw" | "random" | "updated_at" | "userRating"
+    order:
+    // 发布时间
+    "release" |
+    // 收录时间
+    "created_at" |
+    //  我的评价
+    "post_views" |
+    //  销售数量
+    "dl_count" |
+    //  出售价格
+    "price" |
+    //  总评价
+    "rate_average_2dp" |
+    //  评论数量
+    "review_count" |
+    //   RJ号
+    "id" |
+    //   年龄分级
+    "nsfw" |
+    //   随机排序
+    "random" |
+    //   标记时间
+    "updated_at" |
+    //   我的评价（收藏）
+    "userRating"
     sort: "asc" | "desc"
     page: number
     subtitle: 0 | 1
@@ -116,6 +140,7 @@ export type WorkInfo = {
         translation_status_for_translator: {};
     }
     work_attributes: string,
+    age_category:number,
     age_category_string: string,
     duration: number,
     source_type: string,

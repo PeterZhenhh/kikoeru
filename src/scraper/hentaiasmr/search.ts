@@ -45,7 +45,7 @@ const all = async (clientSP: RemoteSearchParams): Promise<{ jFullNums: string[],
         case "release":
             params.filter = "latest"
             break;
-        case "rating":
+        case "post_views":
         case "rate_average_2dp":
             params.filter = "popular"
             break

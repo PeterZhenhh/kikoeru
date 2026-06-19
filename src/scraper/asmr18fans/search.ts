@@ -62,7 +62,7 @@ const all = async (clientSP: RemoteSearchParams): Promise<{ jFullNums: string[],
             case "id":
             case "created_at":
             case "release":
-            case "rating":
+            case "post_views":
             case "rate_average_2dp":
             case "dl_count":
             case "review_count":

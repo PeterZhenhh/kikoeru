@@ -34,7 +34,61 @@ export default async (params: RemoteSearchParams): Promise<RespWorks> => {
     // 3. 拼 works（如果你需要）
     const works: WorkInfo[] = jFullNumbers
         .map(jnum => jInfo[jnum])
-        .filter(Boolean);
+        .filter(Boolean)
+        // 4. 重排序
+        .sort((a, b) => {
+            let c: number = 0;
+            let d: number = 0;
+            switch (params.order) {
+                case "release":
+                case "created_at":
+                case "updated_at":
+                    c = new Date(a.create_date).getTime()
+                    d = new Date(b.create_date).getTime()
+                    break
+                case "userRating":
+                case "rate_average_2dp":
+                case "post_views":
+                    c = a.rate_average_2dp
+                    d = b.rate_average_2dp
+                    break
+                case "dl_count":
+                    c = a.dl_count
+                    d = b.dl_count
+                    break
+                case "price":
+                    c = a.price
+                    d = b.price
+                    break
+                case "review_count":
+                    c = a.rate_count
+                    d = b.rate_count
+                    break
+                case "id":
+                    c = a.id
+                    d = b.id
+                    break
+                case "nsfw":
+                    c = a.age_category
+                    d = b.age_category
+                    break
+                case "random":
+                    c = Math.random()
+                    d = Math.random()
+                    break
+                default:
+                    break;
+            }
+
+            switch (params.sort) {
+                case "asc":
+                    return (c || 0) - (d || 0)
+                case "desc":
+                    return (d || 0) - (c || 0)
+                default:
+                    return 0
+            }
+        })
 
     return {
         pagination: {
