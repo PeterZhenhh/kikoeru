@@ -38,7 +38,7 @@ export const tracks = async ({ jFullNumber }: TrackFuncParam['params']): Promise
     if (await exists(m3u8)) {
         result.push({
             fileName: `${rj.toUpperCase()}_japaneseasmr.m3u8`,
-            fileUrl: `${tryGetContext<AppEnv>()?.env?.rprx_m3u8Cnv || ""}${tryGetContext<AppEnv>()?.env?.rprx_v_japaneseasmr || "https://v.weeab0o.xyz"}/${rj.toUpperCase()}.m3u8`,
+            fileUrl: `${tryGetContext<AppEnv>()?.env?.rprx_v_japaneseasmr || "https://v.weeab0o.xyz"}/${rj.toUpperCase()}.m3u8`,
         });
         return result;
     }

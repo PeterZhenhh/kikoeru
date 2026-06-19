@@ -35,7 +35,7 @@ export const tracks = async ({ jFullNumber }: TrackFuncParam['params']): Promise
         ret.push(
             {
                 fileName: `${label}_asmr18fans`,
-                fileUrl: `${tryGetContext<AppEnv>()?.env?.rprx_m3u8Cnv || ""}https://cdn3.cloudintech.net/file/${jFullNumber.toUpperCase()}/${label.replace(" ", "+")}.m3u8`
+                fileUrl: `https://cdn3.cloudintech.net/file/${jFullNumber.toUpperCase()}/${label.replace(" ", "+")}.m3u8`
             }
         )
     })
