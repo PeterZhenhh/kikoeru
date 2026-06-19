@@ -20,6 +20,8 @@ export default async (params: RemoteSearchParams): Promise<RespWorks> => {
     const jFullNumbers = [
         ...new Set(results.flatMap(item => item.jFullNumber))
     ];
+    console.log(`Search rough result: ${jFullNumbers.length}`);
+
 
     // 2. 并发拉详情
     const entries = await Promise.all(
@@ -29,6 +31,8 @@ export default async (params: RemoteSearchParams): Promise<RespWorks> => {
             return [jnum, info] as const;
         })
     );
+
+    console.log(`Search workmeta result: ${entries.length}`);
 
     const jInfo: Record<string, WorkInfo> = Object.fromEntries(entries);
 
@@ -40,7 +44,7 @@ export default async (params: RemoteSearchParams): Promise<RespWorks> => {
             if (params.searchType == "va" || params.searchType == "circle" || params.searchType == "tag") {
                 for (const v of work.vas) {
                     const raw = objCoder.decode(v.id)
-                    if (raw.t == params.searchType && raw.v.trim() == params.searchKeyword?.trim()) return true
+                    if (raw.t == params.searchType && raw.v == params.searchKeyword) return true
                 }
                 return false
             }
@@ -105,12 +109,14 @@ export default async (params: RemoteSearchParams): Promise<RespWorks> => {
     // Full jNumber matching
     if (params.searchType == "keyword") {
         for (const work of works) {
-            if (params.searchKeyword?.trim().toUpperCase() === work.source_id.trim().toUpperCase()) {
+            if (params.searchKeyword?.toUpperCase() == work.source_id.toUpperCase()) {
                 works.unshift(work)
                 break
             }
         }
     }
+
+    console.log(`Search final result: ${entries.length}`);
 
     return {
         pagination: {
