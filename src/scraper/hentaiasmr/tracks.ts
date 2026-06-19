@@ -34,7 +34,7 @@ export const tracks = async ({ jFullNumber }: TrackFuncParam['params']): Promise
     let ret: BaseTrackFile[] = []
     for (const track of data) {
         ret.push({
-            fileName: track.title,
+            fileName: `${track.title}_hentaiasmr`,
             fileUrl: new URL(`${track.file}`).href
         })
     }

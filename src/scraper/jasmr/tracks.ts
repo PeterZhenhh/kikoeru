@@ -19,7 +19,7 @@ export const tracks = async ({ jFullNumber }: TrackFuncParam['params']): Promise
         return null
     }
     const ret: BaseTrackFile[] = [{
-        fileName: data?.title?.chinese || data?.title?.japanese || data?.title?.english || `${jFullNumber}`,
+        fileName: `${data?.title?.chinese || data?.title?.japanese || data?.title?.english || `${jFullNumber}`}_jasmr`,
         fileUrl: new URL(`https://www.jasmr.net${data.source}`).href
     }]
     return ret
