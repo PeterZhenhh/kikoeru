@@ -53,21 +53,21 @@ export const fetchWorkMeta1 = async (jFullNumber: string): Promise<WorkMeta | nu
     retData = {
         dl_count:
             Object.values(rawData.rate_count_detail as Record<string, number>)
-                .reduce((sum, count) => sum + count, 0),
+                .reduce((sum, count) => sum + count, 0) || 0,
         review_count:
             Object.values(rawData.rate_count_detail as Record<string, number>)
-                .reduce((sum, count) => sum + count, 0),
+                .reduce((sum, count) => sum + count, 0) || 0,
         jFullNumber: rawData.workno,
-        age_category: rawData.age_category,
+        age_category: rawData.age_category || 0,
         rate_average_2dp:
             Object.entries(rawData.rate_count_detail as Record<string, number>)
                 .reduce(
                     ([score, count], [rate, n]) => [score + Number(rate) * n, count + n], [0, 0])
-                .reduce((score, count) => score / count),
-        price: rawData.official_price,
-        workTitle: rawData.product_name,
-        circleName: rawData.maker_name,
-        releaseDate: new Date(rawData.regist_date).toISOString().slice(0, 10),
+                .reduce((score, count) => score / count) || 0,
+        price: rawData.official_price || 0,
+        workTitle: rawData.product_name || jFullNumber.toUpperCase(),
+        circleName: rawData.maker_name || "\0",
+        releaseDate: new Date(rawData.regist_date).toISOString().slice(0, 10) || "",
         vas: ((rawData.creaters?.voice_by) || []).map((item: VoiceBy) => item.name),
         cover: `https://img.dlsite.jp/${rawData.image_main.relative_url}`,
         language_editions: (rawData.language_editions || []).map((item: Record<string, any>) => ({
@@ -109,14 +109,14 @@ export const fetchWorkMeta2 = async (jFullNumber: string): Promise<WorkMeta | nu
 
     retData = {
         jFullNumber: jFullNumber.toUpperCase(),
-        age_category: rawData.age_category,
-        rate_average_2dp: rawData.rate_average_2dp,
-        dl_count: rawData.dl_count,
-        review_count: rawData.rate_count,
-        price: rawData.official_price,
-        workTitle: rawData.work_name,
-        circleName: rawData.maker_id,
-        releaseDate: new Date(rawData.regist_date).toISOString().slice(0, 10),
+        age_category: rawData.age_category || 0,
+        rate_average_2dp: rawData.rate_average_2dp || 0,
+        dl_count: rawData.dl_count || 0,
+        review_count: rawData.rate_count || 0,
+        price: rawData.official_price || 0,
+        workTitle: rawData.work_name || jFullNumber.toUpperCase(),
+        circleName: rawData.maker_id || "\0",
+        releaseDate: new Date(rawData.regist_date).toISOString().slice(0, 10) || "",
         vas: [],
         cover: rawData.work_image?.slice(2),
         language_editions: (rawData.dl_count_items || []).map((item: Record<string, any>) => ({
