@@ -1,7 +1,8 @@
-import type { BaseTrackFile, TrackFuncParam } from "@/types/api"
+import type { BaseTrackFile, TrackFileHash, TrackRespFunc } from "@/types/api"
 import type { AppEnv } from "../../types/hono.ts";
 import { tryGetContext } from 'hono/context-storage'
-export const tracks = async ({ jFullNumber }: TrackFuncParam['params']): Promise<BaseTrackFile[] | null> => {
+import * as objCoder from "../../utils/objCoder.ts"
+export const tracks = async ({ jFullNumber }: TrackRespFunc['params']): Promise<BaseTrackFile[] | null> => {
     console.log(`Fetching tracks for ${jFullNumber} from asmrone...`);
     const jNUm = jFullNumber.match(/\d+/)?.[0] ?? ""
     if (!jNUm) return null
@@ -30,8 +31,8 @@ export const tracks = async ({ jFullNumber }: TrackFuncParam['params']): Promise
     return ret
 }
 
-interface RawNode {
-    type: "audio" | "folder"
+export interface RawNode {
+    type: "audio" | "folder" | "text" | "image" | "other"
     title: string
     children?: RawNode[]
 
@@ -62,7 +63,7 @@ function toBaseTrackFiles(nodes: RawNode[]): BaseTrackFile[] {
             fileUrl: new URL(`${tryGetContext<AppEnv>()?.env?.rprx_general || ""}${node.mediaDownloadUrl}`).href,
             duration: node.duration,
             size: node.size,
-            hash: node.hash
+            hash: objCoder.encode({ source: "asmrone", id: node.hash } as TrackFileHash)
         }]
     }).sort((a, b) => a.fileName > b.fileName ? 1 : -1)
 }

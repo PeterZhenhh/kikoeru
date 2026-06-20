@@ -1,4 +1,4 @@
-import type { RemoteSearchParams, RespWorks, WorkInfo } from "@/types/api";
+import type { ObjEncoded, RemoteSearchParams, RespWorks, SearchWorkParam, WorkInfo } from "@/types/api";
 import { search as search_jasmr } from "./jasmr";
 import { search as search_hentaiasmr } from "./hentaiasmr";
 import { search as search_japaneseasmr } from "./japaneseasmr";
@@ -45,7 +45,7 @@ export default async (params: RemoteSearchParams): Promise<RespWorks> => {
         .filter(work => {
             if (params.searchType == "va" || params.searchType == "circle" || params.searchType == "tag") {
                 for (const v of work.vas) {
-                    const raw = objCoder.decode(v.id)
+                    const raw = objCoder.decode<SearchWorkParam>(v.id as ObjEncoded<SearchWorkParam>)
                     if (raw.t == params.searchType && raw.v == params.searchKeyword) return true
                 }
                 return false

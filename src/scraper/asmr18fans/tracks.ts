@@ -1,9 +1,9 @@
-import type { BaseTrackFile, TrackFuncParam } from "@/types/api"
+import type { BaseTrackFile, TrackRespFunc } from "@/types/api"
 import type { AppEnv } from "../../types/hono.ts";
 import * as cheerio from "cheerio";
 import { tryGetContext } from 'hono/context-storage'
 
-export const tracks = async ({ jFullNumber }: TrackFuncParam['params']): Promise<BaseTrackFile[] | null> => {
+export const tracks = async ({ jFullNumber }: TrackRespFunc['params']): Promise<BaseTrackFile[] | null> => {
     console.log(`Fetching tracks for ${jFullNumber} from asmr18fans...`);
     const url = `https://asmr18.fans/boys/${jFullNumber.toLowerCase()}`
     let html: string

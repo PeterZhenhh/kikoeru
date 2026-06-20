@@ -1,5 +1,5 @@
-import type { BaseTrackFile, TrackFuncParam } from "@/types/api"
-export const tracks = async ({ jFullNumber }: TrackFuncParam['params']): Promise<BaseTrackFile[] | null> => {
+import type { BaseTrackFile, TrackRespFunc } from "@/types/api"
+export const tracks = async ({ jFullNumber }: TrackRespFunc['params']): Promise<BaseTrackFile[] | null> => {
     console.log(`Fetching tracks for ${jFullNumber} from jasmr...`);
     const url = `https://www.jasmr.net/api/v1/videos?code=${jFullNumber}`
     let data: any

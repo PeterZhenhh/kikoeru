@@ -1,5 +1,5 @@
 import type { WorkMeta } from "@/types/workMeta"
-import type { WorkInfo } from "@/types/api";
+import type { SearchWorkParam, WorkInfo } from "@/types/api";
 import type { AppEnv } from "../../types/hono.ts";
 import { tryGetContext } from 'hono/context-storage'
 import * as jNumCoder from "../../utils/jNumCoder"
@@ -79,7 +79,7 @@ export const fetchWorkMeta1 = async (jFullNumber: string): Promise<WorkMeta | nu
             source_type: "DLSITE"
         }) as WorkMeta["language_editions"][number]),
         tags: (rawData.genres || []).map((genre: genres) => ({
-            id: objCoder.encode({ t: "tag", v: genre.name_base }), name: genre.name || genre.name_base
+            id: objCoder.encode({ t: "tag", v: genre.name_base } as SearchWorkParam), name: genre.name || genre.name_base
         }) as WorkMeta["tags"][number])
     }
     return retData
@@ -150,8 +150,8 @@ export const fullFillWorkInfo = ({ jFullNumber, workTitle = "", circleName = "\0
         has_subtitle: false,
         create_date: releaseDate,
         vas: [
-            ...vas.map(va => ({ id: objCoder.encode({ t: "va", v: va }), name: `${va}` })),
-            { id: objCoder.encode({ t: "circle", v: circleName }), name: `【${circleName}】` },
+            ...vas.map(va => ({ id: objCoder.encode({ t: "va", v: va } as SearchWorkParam), name: `🎙️${va}` })),
+            { id: objCoder.encode({ t: "circle", v: circleName } as SearchWorkParam), name: `🌐${circleName}` },
             ...tags
         ],
         tags: [],

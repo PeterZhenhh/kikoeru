@@ -1,6 +1,6 @@
 {
   "imports": {
-    "@/": "/src/",
+    "@/": "./src/",
     "@sentry/core": "npm:@sentry/core"
   },
   "lock": false,

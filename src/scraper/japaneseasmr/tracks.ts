@@ -1,4 +1,4 @@
-import type { BaseTrackFile, TrackFuncParam } from "@/types/api"
+import type { BaseTrackFile, TrackRespFunc } from "@/types/api"
 import type { AppEnv } from "../../types/hono.ts";
 import { tryGetContext } from 'hono/context-storage'
 async function exists(url: URL["href"]): Promise<boolean> {
@@ -19,7 +19,7 @@ async function exists(url: URL["href"]): Promise<boolean> {
     }
 }
 
-export const tracks = async ({ jFullNumber }: TrackFuncParam['params']): Promise<BaseTrackFile[] | null> => {
+export const tracks = async ({ jFullNumber }: TrackRespFunc['params']): Promise<BaseTrackFile[] | null> => {
     console.log(`Fetching tracks for ${jFullNumber} from japaneseasmr...`);
     const rj = jFullNumber;
 

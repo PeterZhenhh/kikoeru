@@ -1,6 +1,12 @@
 import { WorkMeta } from "./workMeta"
 
-export type TrackFuncParam = {
+export type ObjEncoded<T> = string & {
+    readonly __objencoded__: T
+}
+
+export type dataSource = "dlsite" | "asmr18fans" | "asmrone" | "hentaiasmr" | "japaneseasmr" | "jasmr"
+
+export type TrackRespFunc = {
     params: {
         jFullNumber: string
     }
@@ -23,12 +29,30 @@ export type TrackFuncParam = {
     | {
         type: "folder"
         title: string
-        children: TrackFuncParam["result"][]
+        children: TrackRespFunc["result"][]
     }
 }
 
+export type CheckLrcRespFunc = {
+    params: {
+        fileHashObj: TrackFileHash
+    }
+    result: {
+        result: boolean,
+        message: string,
+        hash: ObjEncoded<TrackFileHash> | "",
+    }
+}
+
+export type MediaStreamRespFunc = {
+    params: {
+        fileHashObj: TrackFileHash
+    }
+    result: Response
+}
+
 export type BaseTrackFile = {
-    type: "audio"
+    type: "audio" | "text" | "image" | "other"
     fileName: string,
     fileUrl: URL["href"]
     duration?: number
@@ -172,4 +196,10 @@ export type WorkInfo = {
     samCoverUrl: URL["href"],
     thumbnailCoverUrl: URL["href"],
     mainCoverUrl: string;
+}
+
+export type TrackFileHash = {
+    source: dataSource
+    id: string
+    type: "raw" | BaseTrackFile["type"] | "subtitle"
 }

@@ -1,3 +1,5 @@
+import type { SearchWorkParam, ObjEncoded } from "./api"
+
 export type WorkMeta = {
     jFullNumber: string,
     age_category: number,
@@ -18,8 +20,7 @@ export type WorkMeta = {
         source_type: "DLSITE"
     }[],
     tags: {
-        // objCoder.encode
-        id: string,
+        id: ObjEncoded<SearchWorkParam>,
         name: string
     }[],
     rate_average_2dp: number,

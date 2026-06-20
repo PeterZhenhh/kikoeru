@@ -1,11 +1,11 @@
-import type { TrackFuncParam, BaseTrackFile } from "@/types/api"
+import type { TrackRespFunc, BaseTrackFile } from "@/types/api"
 import { tracks as tracks_jasmr } from "./jasmr";
 import { tracks as tracks_hentaiasmr } from "./hentaiasmr";
 import { tracks as tracks_japaneseasmr } from "./japaneseasmr";
 import { tracks as tracks_asmr18fans } from "./asmr18fans";
 import { tracks as tracks_asmrone } from "./asmrone";
 
-export default async ({ jFullNumber }: TrackFuncParam['params']): Promise<TrackFuncParam['result'][]> => {
+export default async ({ jFullNumber }: TrackRespFunc['params']): Promise<TrackRespFunc['result'][]> => {
     const ignoreEmpty = async (
         p: Promise<BaseTrackFile[] | null>
     ): Promise<BaseTrackFile[]> => {
@@ -30,7 +30,7 @@ export default async ({ jFullNumber }: TrackFuncParam['params']): Promise<TrackF
     function convertTrack(
         track: BaseTrackFile,
         jFullNumber: string
-    ): TrackFuncParam["result"] {
+    ): TrackRespFunc["result"] {
         if (track.type === "folder") {
             return {
                 type: "folder",
@@ -61,6 +61,6 @@ export default async ({ jFullNumber }: TrackFuncParam['params']): Promise<TrackF
     }
     const ret = (tracks ?? []).map((track) =>
         convertTrack(track, `${jFullNumber}`)
-    ) as TrackFuncParam["result"][]
+    ) as TrackRespFunc["result"][]
     return ret
 }

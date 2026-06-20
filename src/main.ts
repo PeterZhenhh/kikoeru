@@ -1,8 +1,8 @@
 import type { AppEnv } from "./types/hono.ts";
-import type { RemoteSearchParams, RespWorks, SearchWorkParam } from "./types/api.ts"
+import type { ObjEncoded, RemoteSearchParams, RespWorks, SearchWorkParam, TrackFileHash } from "./types/api.ts"
 import type { ClientSearchParams } from "./types/api.ts";
 import type { Context } from "hono";
-import { Hono } from "hono/tiny";
+import { Hono } from "hono";
 import { contextStorage } from 'hono/context-storage'
 import { showRoutes } from 'hono/dev'
 import * as objCoder from "./utils/objCoder.ts"
@@ -12,6 +12,8 @@ import { zValidator } from '@hono/zod-validator'
 import { fullFillWorkInfo, fetchWorkMeta } from "./scraper/dlsite/product.ts"
 import { stream } from "hono/streaming";
 import searchRemoteWorks from "./scraper/search.ts"
+import searchRemoteSubtitle from "./scraper/subtitle.ts"
+import streamRemoteMedia from "./scraper/mediaStream.ts"
 
 const app = new Hono<AppEnv>().basePath('/api');
 app.use(contextStorage())
@@ -147,9 +149,7 @@ app.get("/:field{circle|tag|va}s/:data/works", zValidator("query", SearchSchema)
       query = { t: field, v: parseInt(data) }
       break;
     case "va":
-      query = objCoder.decode(data)
-      console.log(query);
-
+      query = objCoder.decode<SearchWorkParam>(data as ObjEncoded<SearchWorkParam>)
       break
     default:
       throw new Error(`Invalid field: ${field}`)
@@ -205,6 +205,22 @@ app.get("/:filter/works", async (c, next) => {
   )
 });
 //#endregion
+
+// 字幕搜索
+app.get("/media/check-lrc/:fileHash{.*}", async (c, next) => {
+  const { fileHash } = c.req.param() as { fileHash: ObjEncoded<TrackFileHash> }
+  if (!fileHash) return c.json({ result: false, hash: "", message: "" })
+  const fileHashObj = objCoder.decode<TrackFileHash>(fileHash)
+
+  return streamJson(c, async () => searchRemoteSubtitle({ fileHashObj }));
+})
+
+// 字幕文件导出
+app.get("/media/stream/:fileHash{.*}", async (c, next) => {
+  const { fileHash } = c.req.param() as { fileHash: ObjEncoded<TrackFileHash> }
+  const fileHashObj = objCoder.decode<TrackFileHash>(fileHash)
+  return streamRemoteMedia({ fileHashObj })
+})
 
 
 showRoutes(app, {
