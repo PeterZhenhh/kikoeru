@@ -42,7 +42,7 @@ export const tracks = async ({ jFullNumber }: TrackRespFunc['params']): Promise<
             fileName: `${track.title}_hentaiasmr`,
             fileUrl: new URL(
                 (tryGetContext<AppEnv>()?.env?.rprx_general) ?
-                    `${tryGetContext<AppEnv>()?.env?.rprx_general}${encodeURIComponent(track.file || "")}` :
+                    `${tryGetContext<AppEnv>()?.env?.rprx_general}${btoa(track.file || "")}` :
                     `${track.file || ""}`
             ).href,
         })

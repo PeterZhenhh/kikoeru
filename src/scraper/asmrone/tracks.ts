@@ -62,7 +62,7 @@ function toBaseTrackFiles(nodes: RawNode[]): BaseTrackFile[] {
 
             fileUrl: new URL(
                 (tryGetContext<AppEnv>()?.env?.rprx_general) ?
-                    `${tryGetContext<AppEnv>()?.env?.rprx_general}${encodeURIComponent(node.mediaDownloadUrl || "")}` :
+                    `${tryGetContext<AppEnv>()?.env?.rprx_general}${btoa(node.mediaDownloadUrl || "")}` :
                     `${node.mediaDownloadUrl || ""}`
             ).href,
             duration: node.duration,
