@@ -60,7 +60,11 @@ function toBaseTrackFiles(nodes: RawNode[]): BaseTrackFile[] {
             type: node.type,
             fileName: node.title,
 
-            fileUrl: new URL(`${tryGetContext<AppEnv>()?.env?.rprx_general || ""}${node.mediaDownloadUrl}`).href,
+            fileUrl: new URL(
+                (tryGetContext<AppEnv>()?.env?.rprx_general) ?
+                    `${tryGetContext<AppEnv>()?.env?.rprx_general}${encodeURIComponent(node.mediaDownloadUrl || "")}` :
+                    `${node.mediaDownloadUrl || ""}`
+            ).href,
             duration: node.duration,
             size: node.size,
             hash: objCoder.encode({ source: "asmrone", id: node.hash } as TrackFileHash)
