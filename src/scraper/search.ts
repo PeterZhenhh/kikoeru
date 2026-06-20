@@ -42,6 +42,7 @@ export default async (params: RemoteSearchParams): Promise<RespWorks> => {
     let works: WorkInfo[] = jFullNumbers
         .map(jnum => jInfo[jnum])
         .filter(Boolean)
+        // 选定分类筛选
         .filter(work => {
             if (params.searchType == "va" || params.searchType == "circle" || params.searchType == "tag") {
                 for (const v of work.vas) {
@@ -49,6 +50,16 @@ export default async (params: RemoteSearchParams): Promise<RespWorks> => {
                     if (raw.t == params.searchType && raw.v == params.searchKeyword) return true
                 }
                 return false
+            }
+            return true
+        })
+        // CV单人限定筛选
+        .filter(work => {
+            if (params.searchType == "va" && params.subtitle) {
+                for (const v of work.vas) {
+                    const raw = objCoder.decode<SearchWorkParam>(v.id as ObjEncoded<SearchWorkParam>)
+                    if (raw.t == params.searchType && raw.v != params.searchKeyword) return false
+                }
             }
             return true
         })
