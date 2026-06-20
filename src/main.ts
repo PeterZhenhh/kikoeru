@@ -1,6 +1,7 @@
 import type { AppEnv } from "./types/hono.ts";
 import type { RemoteSearchParams, RespWorks, SearchWorkParam } from "./types/api.ts"
 import type { ClientSearchParams } from "./types/api.ts";
+import type { Context } from "hono";
 import { Hono } from "hono/tiny";
 import { contextStorage } from 'hono/context-storage'
 import { showRoutes } from 'hono/dev'
@@ -9,6 +10,7 @@ import * as jNumCoder from "./utils/jNumCoder.ts"
 import * as z from 'zod'
 import { zValidator } from '@hono/zod-validator'
 import { fullFillWorkInfo, fetchWorkMeta } from "./scraper/dlsite/product.ts"
+import { stream } from "hono/streaming";
 import searchRemoteWorks from "./scraper/search.ts"
 
 const app = new Hono<AppEnv>().basePath('/api');
@@ -64,9 +66,12 @@ app.get("/vas", async (c, next) => {
 app.get("/:_{workInfo|work}/:jCode", async (c, next) => {
   const jCode = parseInt(c.req.param("jCode"))
   const jFullNumber = jNumCoder.fromCode(jCode)
-  const workMeta = await fetchWorkMeta(jFullNumber)
-  const data = fullFillWorkInfo(workMeta)
-  return c.json(data);
+
+  return streamJson(c, async () => {
+    const workMeta = await fetchWorkMeta(jFullNumber)
+    const data = fullFillWorkInfo(workMeta)
+    return data
+  });
 });
 
 
@@ -74,9 +79,10 @@ app.get("/:_{workInfo|work}/:jCode", async (c, next) => {
 app.get("/tracks/:jCode", async (c, next) => {
   const jCode = parseInt(c.req.param("jCode"))
   const jFullNumber = jNumCoder.fromCode(jCode)
-  const data = await (await import("./scraper/tracks.ts")).default({ jFullNumber })
-
-  return c.json(data);
+  return streamJson(c, async () => {
+    const data = await (await import("./scraper/tracks.ts")).default({ jFullNumber })
+    return data
+  });
 });
 
 
@@ -121,9 +127,14 @@ app.get("/review", zValidator("query", SearchSchema), async (c, next) => {
 // 主页探索
 app.get("/works", zValidator("query", SearchSchema), async (c, next) => {
   const { order, sort, page, subtitle } = c.req.valid("query")
+
   const query: SearchWorkParam = { t: "keyword", v: "" }
-  return c.json(await searchAllWorks({ searchType: query.t, searchKeyword: query.v, order, sort, page, subtitle }))
-});
+
+  return streamJson(c, () =>
+    searchAllWorks({ searchType: query.t, searchKeyword: query.v, order, sort, page, subtitle, })
+  );
+}
+);
 
 // 社团/标签/CV 搜索
 app.get("/:field{circle|tag|va}s/:data/works", zValidator("query", SearchSchema), async (c, next) => {
@@ -144,7 +155,7 @@ app.get("/:field{circle|tag|va}s/:data/works", zValidator("query", SearchSchema)
       throw new Error(`Invalid field: ${field}`)
   }
 
-  return c.json(await searchAllWorks({ searchType: query.t, searchKeyword: query.v, order, sort, page, subtitle }))
+  return streamJson(c, async () => searchAllWorks({ searchType: query.t, searchKeyword: query.v, order, sort, page, subtitle }));
 });
 
 // 关键词 搜索
@@ -152,7 +163,7 @@ app.get("/search/:keyword", zValidator("query", SearchSchema), async (c, next) =
   const { order, sort, page, subtitle } = c.req.valid("query")
   const { keyword } = c.req.param()
   const query: SearchWorkParam = { t: "keyword", v: keyword }
-  return c.json(await searchAllWorks({ searchType: query.t, searchKeyword: query.v, order, sort, page, subtitle }))
+  return streamJson(c, async () => searchAllWorks({ searchType: query.t, searchKeyword: query.v, order, sort, page, subtitle }));
 })
 
 // 作品聚合搜索
@@ -199,5 +210,57 @@ app.get("/:filter/works", async (c, next) => {
 showRoutes(app, {
   verbose: true,
 })
+
+export const streamJson = <T,>(
+  c: Context,
+  fn: () => Promise<T>,
+  heartbeatMs = 3000
+) => {
+  return stream(c, async (s) => {
+    c.header("Content-Type", "application/json; charset=utf-8");
+    c.header("Cache-Control", "no-cache");
+
+    let finished = false;
+    let writing: Promise<void> = Promise.resolve();
+
+    const write = (data: string): Promise<void> => {
+      writing = writing.then(() =>
+        s.write(data).then(() => { })
+      );
+
+      return writing;
+    };
+
+    // 立即发送一个空白字符，促使 header/chunk 发出
+    await write(" ");
+
+    const timer = setInterval(() => {
+      if (finished) return;
+
+      // 继续发送 JSON 合法空白字符
+      void write(" ");
+    }, heartbeatMs);
+
+    try {
+      const result = await fn();
+
+      finished = true;
+      clearInterval(timer);
+
+      // 等待所有 heartbeat 写完
+      await writing;
+
+      // 一次性输出完整 JSON
+      await write(JSON.stringify(result));
+    } catch (err) {
+      finished = true;
+      clearInterval(timer);
+
+      await writing;
+
+      throw err;
+    }
+  });
+};
 
 export default app
