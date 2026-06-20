@@ -2,7 +2,7 @@ import type { AppEnv } from "./types/hono.ts";
 import type { ObjEncoded, RemoteSearchParams, RespWorks, SearchWorkParam, TrackFileHash } from "./types/api.ts"
 import type { ClientSearchParams } from "./types/api.ts";
 import type { Context } from "hono";
-import { Hono } from "hono";
+import { Hono } from "hono/tiny";
 import { contextStorage } from 'hono/context-storage'
 import { showRoutes } from 'hono/dev'
 import * as objCoder from "./utils/objCoder.ts"
