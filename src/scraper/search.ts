@@ -17,6 +17,8 @@ export default async (params: RemoteSearchParams): Promise<RespWorks> => {
     ]
 
     const results = await Promise.all(dataSources);
+    console.log("Search source result: ",results.map(result => result.jFullNumber.length));
+
 
     // 1. 合并 + 去重
     const jFullNumbers = [
