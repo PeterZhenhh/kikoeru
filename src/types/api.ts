@@ -210,11 +210,15 @@ const DATA_SOURCE = [
 
 export type TrackFileHash = (
     | {
-          source: "japaneseasmr";
+          source: "japaneseasmr" | "asmr18fans" | "jasmr";
           id: WorkFullNumber;
       }
     | {
-          source: Exclude<(typeof DATA_SOURCE)[number], "japaneseasmr">;
+          source: "asmrone";
+          id: `${number}/${number}`;
+      }
+    | {
+          source: Exclude<(typeof DATA_SOURCE)[number], ExcludedSource>;
           id: string;
       }
 ) & {
@@ -223,7 +227,9 @@ export type TrackFileHash = (
 
 // 字幕
 type EnsureDataSource<T extends (typeof DATA_SOURCE)[number]> = T;
-type ExcludedSource = EnsureDataSource<"japaneseasmr" | "asmrone">;
+type ExcludedSource = EnsureDataSource<
+    "japaneseasmr" | "asmrone" | "asmr18fans" | "jasmr"
+>;
 
 type SubtitleQueryHashBase =
     | {
@@ -235,12 +241,20 @@ type SubtitleQueryHashBase =
           id: `${number}/${number}`;
       }
     | {
+          source: "asmr18fans";
+          id: WorkFullNumber;
+      }
+    | {
+          source: "jasmr";
+          id: WorkFullNumber;
+      }
+    | {
           [K in Exclude<(typeof DATA_SOURCE)[number], ExcludedSource>]: {
               source: K;
               id: string;
           };
       }[Exclude<(typeof DATA_SOURCE)[number], ExcludedSource>];
-      
+
 export type SubtitleQueryHash<
     T extends (typeof DATA_SOURCE)[number] = (typeof DATA_SOURCE)[number],
 > = Extract<SubtitleQueryHashBase, { source: T }> & {

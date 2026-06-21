@@ -34,13 +34,13 @@ export default async (clientSP: RemoteSearchParams): Promise<RemoteWork> => {
 
 const all = async (
     clientSP: RemoteSearchParams,
-    sizeLimit: number,
+    sizeLimit: 20,
 ): Promise<{ jFullNums: WorkFullNumber[]; totalCount: number }> => {
     const params: SearchParms = {
         order: "release",
         sort: clientSP.sort,
         page: clientSP.page,
-        pageSize: 20,
+        pageSize: sizeLimit,
         subtitle: clientSP.subtitle,
         seed: Math.floor(Math.random() * 100),
         includeTranslationWorks: true,

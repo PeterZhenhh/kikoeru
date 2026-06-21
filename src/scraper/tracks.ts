@@ -4,7 +4,7 @@ import { tracks as tracks_jasmr } from "./jasmr";
 import { tracks as tracks_hentaiasmr } from "./hentaiasmr";
 import { tracks as tracks_japaneseasmr } from "./japaneseasmr";
 import { tracks as tracks_asmr18fans } from "./asmr18fans";
-import { tracks as tracks_asmrone } from "./asmrone";
+import { tracks as tracks_asmrone } from "./jasmr";
 
 export default async ({
     jFullNumber,
