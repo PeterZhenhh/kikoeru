@@ -1,5 +1,6 @@
 import type { BaseTrackFile, TrackRespFunc } from "@/types/api";
 import * as cheerio from "cheerio";
+import * as objCoder from "../../utils/objCoder.ts";
 
 export const tracks = async ({
     jFullNumber,
@@ -40,6 +41,11 @@ export const tracks = async ({
             type: "audio",
             fileName: `${label}_asmr18fans`,
             fileUrl: `https://cdn3.cloudintech.net/file/${jFullNumber.toUpperCase()}/${label.replace(" ", "+")}.m3u8`,
+            hash: objCoder.encode({
+                source: "asmr18fans",
+                type: "audio",
+                id: jFullNumber,
+            }),
         });
     });
 
