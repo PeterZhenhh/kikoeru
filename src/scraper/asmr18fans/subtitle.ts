@@ -1,38 +1,24 @@
 import type { SubtitleQueryHash, TrackFileHash } from "@/types/api";
-import type { RemoteSearchParams } from "@/types/api";
-import { searchAllInPage } from "./search";
-import { getRemoteDomain } from "./";
 import * as cheerio from "cheerio";
+import { getRemoteDomain } from "./";
 
 export default async (
     fileHashObj: TrackFileHash,
-): Promise<SubtitleQueryHash> => {
-    if (fileHashObj.source != "japaneseasmr") return Promise.reject();
+): Promise<SubtitleQueryHash<"asmr18fans">> => {
+    if (fileHashObj.source != "asmr18fans") return Promise.reject();
     const jNum = fileHashObj.id;
     if (!jNum) return Promise.reject();
-    const clientSP: RemoteSearchParams = {
-        order: "release",
-        page: 1,
-        searchKeyword: `${jNum}`,
-        searchType: "keyword",
-        sort: "desc",
-        subtitle: 1,
-    };
 
-    const resp = await searchAllInPage(clientSP);
-    const pageId = resp.pageIds[jNum];
-    if (!pageId) return Promise.reject();
-
-    const ret: SubtitleQueryHash<"japaneseasmr"> = {
-        source: "japaneseasmr",
-        pageId,
+    const ret: SubtitleQueryHash<"asmr18fans"> = {
+        source: "asmr18fans",
+        id: jNum.toLowerCase(),
         type: "subtitle-lrc",
     };
     return ret;
 };
 
 export const streamLrc = async (
-    fileHashObj: SubtitleQueryHash<"japaneseasmr">,
+    fileHashObj: SubtitleQueryHash<"asmr18fans">,
 ): Promise<string> => {
     const secToLrcTime = (seconds: number): string => {
         const mm = Math.floor(seconds / 60);
@@ -41,8 +27,7 @@ export const streamLrc = async (
 
         return `[${String(mm).padStart(2, "0")}:${String(ss).padStart(2, "0")}.${String(xx).padStart(2, "0")}]`;
     };
-
-    const url = `${getRemoteDomain()}/${fileHashObj.pageId}/`;
+    const url = `https://asmr18.fans/boys/${fileHashObj.id}/`;
     let html: string;
     const lines: string[] = [];
 
@@ -65,19 +50,17 @@ export const streamLrc = async (
 
     // 解析章节
     const $ = cheerio.load(html);
-    $("#plyr-chapter-playlist tr").each((_, tr) => {
-        const timeEl = $(tr).find("td.start_time a");
-        const titleEl = $(tr).find("td.chapter_title a");
+    $("#chapter a").each((_, el) => {
+        const $el = $(el);
 
-        const seconds = Number(timeEl.attr("data-value"));
-        const title =
-            titleEl.attr("data-track-title")?.trim() || titleEl.text().trim();
+        const seconds = Number($el.attr("data-value") || "0");
 
-        if (!Number.isFinite(seconds) || !title) {
-            return; // 跳过表头
-        }
+        // 去掉 span，只保留文本
+        const text = $el.clone().children("span").remove().end().text().trim();
 
-        lines.push(`${secToLrcTime(seconds)}${title}`);
+        const time = secToLrcTime(seconds);
+
+        lines.push(`${time}${text}`);
     });
 
     return lines.join("\n");

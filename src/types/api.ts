@@ -235,9 +235,12 @@ type SubtitleQueryHashBase =
           id: `${number}/${number}`;
       }
     | {
-          source: Exclude<(typeof DATA_SOURCE)[number], ExcludedSource>;
-          id: string;
-      };
+          [K in Exclude<(typeof DATA_SOURCE)[number], ExcludedSource>]: {
+              source: K;
+              id: string;
+          };
+      }[Exclude<(typeof DATA_SOURCE)[number], ExcludedSource>];
+      
 export type SubtitleQueryHash<
     T extends (typeof DATA_SOURCE)[number] = (typeof DATA_SOURCE)[number],
 > = Extract<SubtitleQueryHashBase, { source: T }> & {

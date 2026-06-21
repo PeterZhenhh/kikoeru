@@ -1,8 +1,7 @@
 import type { RemoteSearchParams } from "@/types/api";
 import type { RemoteWork, WorkFullNumber } from "@/types/workMeta";
-import type { AppEnv } from "../../types/hono.ts";
-import { tryGetContext } from "hono/context-storage";
 import * as cheerio from "cheerio";
+import { getRemoteDomain } from "./";
 
 type SearchParms = {
     // /page/1
@@ -13,11 +12,7 @@ type SearchParms = {
     // size?:14
 };
 
-const getRemoteDomain = () => {
-    return (
-        tryGetContext<AppEnv>()?.env?.rprx_asmr18fans || "https://asmr18.fans"
-    );
-};
+
 
 export default async (clientSP: RemoteSearchParams): Promise<RemoteWork> => {
     const data = await all(clientSP);
