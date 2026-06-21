@@ -6,6 +6,7 @@ import type {
     SearchWorkIdObj,
     TrackFileHash,
     SearchWorkType,
+    SubtitleQueryHash,
 } from "./types/api.ts";
 import type { ClientSearchParams } from "./types/api.ts";
 import type { Context } from "hono";
@@ -240,9 +241,9 @@ app.get("/media/check-lrc/:fileHash{.*}", async (c, next) => {
 // 字幕文件导出
 app.get("/media/stream/:fileHash{.*}", async (c, next) => {
     const { fileHash } = c.req.param() as {
-        fileHash: ObjEncoded<TrackFileHash>;
+        fileHash: ObjEncoded<TrackFileHash | SubtitleQueryHash>;
     };
-    const fileHashObj = objCoder.decode<TrackFileHash>(fileHash);
+    const fileHashObj = objCoder.decode(fileHash);
     return streamRemoteMedia({ fileHashObj });
 });
 

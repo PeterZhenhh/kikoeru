@@ -4,6 +4,8 @@ import { tryGetContext } from 'hono/context-storage'
 import * as objCoder from "../../utils/objCoder.ts"
 async function exists(url: URL["href"]): Promise<boolean> {
     try {
+        console.log(url);
+        
         const res = await fetch(url, {
             method: "HEAD",
             redirect: "follow",
@@ -20,7 +22,7 @@ async function exists(url: URL["href"]): Promise<boolean> {
     }
 }
 
-export const tracks = async ({ jFullNumber }: TrackRespFunc['params']): Promise<BaseTrackFile[] | null> => {
+export const tracks = async ({ jFullNumber }: TrackRespFunc['params']): Promise<BaseTrackFile[]> => {
     console.log(`Fetching tracks for ${jFullNumber} from japaneseasmr...`);
     const rj = jFullNumber;
 
@@ -28,7 +30,7 @@ export const tracks = async ({ jFullNumber }: TrackRespFunc['params']): Promise<
     const cover = `https://pic.weeabo0.xyz/${rj.toUpperCase()}_img_main.jpg`;
 
     if (!(await exists(cover))) {
-        return null;
+        return Promise.reject()
     }
 
     let result: BaseTrackFile[] = []
@@ -57,7 +59,7 @@ export const tracks = async ({ jFullNumber }: TrackRespFunc['params']): Promise<
             hash: objCoder.encode({ source: "japaneseasmr", type: "audio", id: jFullNumber })
         });
     } else {
-        return null
+        return Promise.reject()
     }
 
     // 4. 检查 RJxxxx 2.mp3、RJxxxx 3.mp3 ...
@@ -76,5 +78,5 @@ export const tracks = async ({ jFullNumber }: TrackRespFunc['params']): Promise<
         });
     }
 
-    return result.length ? result : null
+    return result.length ? result : Promise.reject()
 }

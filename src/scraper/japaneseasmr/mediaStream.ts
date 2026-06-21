@@ -4,7 +4,7 @@ import { streamLrc } from "./subtitle";
 export default async (
     fileHashObj: TrackFileHash | SubtitleQueryHash,
 ): Promise<BodyInit> => {
-    if (fileHashObj.source != "asmrone") return Promise.reject();
+    if (fileHashObj.source != "japaneseasmr") return Promise.reject();
     switch (fileHashObj.type) {
         case "subtitle-lrc":
             return streamLrc(fileHashObj);

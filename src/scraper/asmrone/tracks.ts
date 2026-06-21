@@ -2,10 +2,10 @@ import type { BaseTrackFile, TrackFileHash, TrackRespFunc } from "@/types/api"
 import type { AppEnv } from "../../types/hono.ts";
 import { tryGetContext } from 'hono/context-storage'
 import * as objCoder from "../../utils/objCoder.ts"
-export const tracks = async ({ jFullNumber }: TrackRespFunc['params']): Promise<BaseTrackFile[] | null> => {
+export const tracks = async ({ jFullNumber }: TrackRespFunc['params']): Promise<BaseTrackFile[]> => {
     console.log(`Fetching tracks for ${jFullNumber} from asmrone...`);
     const jNUm = jFullNumber.match(/\d+/)?.[0] ?? ""
-    if (!jNUm) return null
+    if (!jNUm) return  Promise.reject()
     const url = `https://api.asmr.one/api/tracks/${jNUm}`
     let data: any
     try {
@@ -20,11 +20,11 @@ export const tracks = async ({ jFullNumber }: TrackRespFunc['params']): Promise<
         data = await resp.json()
     } catch (error) {
         console.error(`Error fetching tracks for ${jFullNumber} from asmrone:`, error);
-        return null
+        return Promise.reject()
     }
 
     if (!data.length) {
-        return null
+        return Promise.reject()
     }
     const ret: BaseTrackFile[] = toBaseTrackFiles(data)
 

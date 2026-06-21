@@ -1,59 +1,116 @@
-import type { TrackFileHash } from "@/types/api";
-import type { RawNode } from "./tracks"
-import subConf from "./calSubConf"
+import type { SubtitleQueryHash, TrackFileHash } from "@/types/api";
+import type { RawNode } from "./tracks";
+import subConf from "./calSubConf";
 
-export default async (fileHashObj: TrackFileHash): Promise<TrackFileHash | null> => {
-    if (fileHashObj.source != "asmrone" || fileHashObj.type != "audio") return null
-    const [JNum, fileId] = fileHashObj.id.split("/")
-    if (!fileId) return null
-    let trackInfoTree: RawNode[]
+export default async (
+    fileHashObj: TrackFileHash,
+): Promise<SubtitleQueryHash> => {
+    if (fileHashObj.source != "asmrone") return Promise.reject();
+    const [JNum, fileId] = fileHashObj.id.split("/");
+    if (!fileId) return Promise.reject();
+    let trackInfoTree: RawNode[];
     try {
-        const url = `https://api.asmr.one/api/tracks/${JNum}`
-        trackInfoTree = await (await fetch(url, {
-            headers: {
-                "user-agent": "okhttp/5.0.0-alpha.11"
-            },
-        })).json() as RawNode[]
+        const url = `https://api.asmr.one/api/tracks/${JNum}`;
+        trackInfoTree = (await (
+            await fetch(url, {
+                headers: {
+                    "user-agent": "okhttp/5.0.0-alpha.11",
+                },
+            })
+        ).json()) as RawNode[];
     } catch (error) {
         console.log(error);
-        return null
+        return Promise.reject();
     }
 
-    let result: { hash: string, confidence: number }[] = []
-    let wavName: string
-    let wavDuration: number
-
+    let result: { hash: `${number}/${number}`; confidence: number }[] = [];
+    let wavName: string;
+    let wavDuration: number;
 
     const walkFolder = (root: RawNode[], fn: (node: RawNode) => any) => {
-        root.forEach(node => {
-            if (node.type == "folder") walkFolder(node.children ?? [], fn)
-            fn(node)
-        })
-    }
+        root.forEach((node) => {
+            if (node.type == "folder") walkFolder(node.children ?? [], fn);
+            fn(node);
+        });
+    };
 
     walkFolder(trackInfoTree, (node) => {
         if (node.hash == fileHashObj.id) {
-            wavName = node.title
-            wavDuration = node.duration || 0
+            wavName = node.title;
+            wavDuration = node.duration || 0;
         }
-    })
-    if (!wavName!) return null
+    });
+    if (!wavName!) return Promise.reject();
 
     walkFolder(trackInfoTree, (node) => {
-        if (node.type != "text") return
-        import("subsrt-ts")
+        if (node.type != "text") return;
+        import("subsrt-ts");
 
-        const isSubtitle = [".ass", ".lrc", ".sbv", ".smi", "srt", "ssa", "sub", "vtt"]
-            .some(ext => node.title.toLowerCase().endsWith(ext))
-        if (!isSubtitle) return
-        result.push({ hash: node.hash!, confidence: subConf(wavName, wavDuration, node.title, node.duration || 0) })
-    })
+        const isSubtitle = [
+            ".ass",
+            ".lrc",
+            ".sbv",
+            ".smi",
+            "srt",
+            "ssa",
+            "sub",
+            "vtt",
+        ].some((ext) => node.title.toLowerCase().endsWith(ext));
+        if (!isSubtitle || !node.hash) return;
+        if (!isAsmroneHash(node.hash)) return;
+        result.push({
+            hash: node.hash,
+            confidence: subConf(
+                wavName,
+                wavDuration,
+                node.title,
+                node.duration || 0,
+            ),
+        });
+    });
 
-    result.sort((a, b) => a.confidence - b.confidence)
-    const retHash = result.pop()?.hash
-    if (!retHash) return null
-    const ret: TrackFileHash = { source: "asmrone", id: retHash, type: "subtitle" }
-    return ret
+    result.sort((a, b) => a.confidence - b.confidence);
+    const retHash = result.pop()?.hash;
+    if (!retHash) return Promise.reject();
+    const ret: SubtitleQueryHash = {
+        source: "asmrone",
+        id: retHash,
+        type: "subtitle-lrc",
+    };
+    return ret;
+};
 
-
+function isAsmroneHash(value: string): value is `${number}/${number}` {
+    return /^\d+\/\d+$/.test(value);
 }
+
+const convertSubtitle = async (rawText: string, targetFormat: string) => {
+    let from = rawText;
+    const subsrt = await import("subsrt-ts");
+    const to = subsrt.convert(from, { format: targetFormat, to: targetFormat });
+    return to.replaceAll("\r\n", "\n");
+};
+
+export const streamLrc = async (
+    fileHashObj: SubtitleQueryHash<"asmrone">,
+): Promise<string> => {
+    const url = `https://api.asmr.one/api/media/stream/${fileHashObj.id}`;
+    let subRawText: string;
+    try {
+        console.log(url);
+
+        subRawText = await (
+            await fetch(url, {
+                headers: {
+                    "user-agent": "okhttp/5.0.0-alpha.11",
+                },
+            })
+        ).text();
+    } catch (error) {
+        console.log(error);
+        return Promise.reject();
+    }
+
+    const lrc = await convertSubtitle(subRawText, "lrc");
+    return lrc;
+};

@@ -1,5 +1,5 @@
 import type { BaseTrackFile, TrackRespFunc } from "@/types/api"
-export const tracks = async ({ jFullNumber }: TrackRespFunc['params']): Promise<BaseTrackFile[] | null> => {
+export const tracks = async ({ jFullNumber }: TrackRespFunc['params']): Promise<BaseTrackFile[]> => {
     console.log(`Fetching tracks for ${jFullNumber} from jasmr...`);
     const url = `https://www.jasmr.net/api/v1/videos?code=${jFullNumber}`
     let data: any
@@ -15,10 +15,10 @@ export const tracks = async ({ jFullNumber }: TrackRespFunc['params']): Promise<
         data = await resp.json()
     } catch (error) {
         console.error(`Error fetching tracks for ${jFullNumber} from jasmr:`, error);
-        return null
+        return Promise.reject(error)
     }
     if (!data || !data.source) {
-        return null
+        return Promise.reject()
     }
     const ret: BaseTrackFile[] = [{
         type: "audio",

@@ -39,13 +39,13 @@ export type CheckLrcRespFunc = {
     result: {
         result: boolean;
         message: string;
-        hash: ObjEncoded<TrackFileHash> | "";
+        hash: ObjEncoded<SubtitleQueryHash> | "";
     };
 };
 
 export type MediaStreamRespFunc = {
     params: {
-        fileHashObj: TrackFileHash;
+        fileHashObj: TrackFileHash | SubtitleQueryHash;
     };
     result: Response;
 };
@@ -208,8 +208,38 @@ const DATA_SOURCE = [
     "jasmr",
 ] as const;
 
-export type TrackFileHash = {
-    source: (typeof DATA_SOURCE)[number];
-    id: string;
-    type: BaseTrackFile["type"] | "raw" | "subtitle";
+export type TrackFileHash = (
+    | {
+          source: "japaneseasmr";
+          id: WorkFullNumber;
+      }
+    | {
+          source: Exclude<(typeof DATA_SOURCE)[number], "japaneseasmr">;
+          id: string;
+      }
+) & {
+    type: BaseTrackFile["type"];
+};
+
+// 字幕
+type EnsureDataSource<T extends (typeof DATA_SOURCE)[number]> = T;
+type ExcludedSource = EnsureDataSource<"japaneseasmr" | "asmrone">;
+
+type SubtitleQueryHashBase =
+    | {
+          source: "japaneseasmr";
+          pageId: number;
+      }
+    | {
+          source: "asmrone";
+          id: `${number}/${number}`;
+      }
+    | {
+          source: Exclude<(typeof DATA_SOURCE)[number], ExcludedSource>;
+          id: string;
+      };
+export type SubtitleQueryHash<
+    T extends (typeof DATA_SOURCE)[number] = (typeof DATA_SOURCE)[number],
+> = Extract<SubtitleQueryHashBase, { source: T }> & {
+    type: "subtitle-lrc" | "subtitle-vtt";
 };
