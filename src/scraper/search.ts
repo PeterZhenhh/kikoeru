@@ -1,11 +1,17 @@
-import type { ObjEncoded, RemoteSearchParams, RespWorks, SearchWorkIdObj, WorkInfo } from "@/types/api";
+import type {
+    ObjEncoded,
+    RemoteSearchParams,
+    RespWorks,
+    SearchWorkIdObj,
+    WorkInfo,
+} from "@/types/api";
 import { search as search_jasmr } from "./jasmr";
 import { search as search_hentaiasmr } from "./hentaiasmr";
 import { search as search_japaneseasmr } from "./japaneseasmr";
 import { search as search_asmr18fans } from "./asmr18fans";
 import { search as search_asmrone } from "./asmrone";
 import { fullFillWorkInfo, fetchWorkMeta } from "./dlsite/product";
-import * as objCoder from "../utils/objCoder"
+import * as objCoder from "../utils/objCoder";
 
 export default async (params: RemoteSearchParams): Promise<RespWorks> => {
     const dataSources = [
@@ -13,19 +19,22 @@ export default async (params: RemoteSearchParams): Promise<RespWorks> => {
         search_japaneseasmr(params),
         search_hentaiasmr(params),
         search_asmr18fans(params),
-        search_asmrone(params)
-    ]
+        search_asmrone(params),
+    ];
 
     const results = await Promise.all(dataSources);
-    console.log("Search source result: ", results.map(result => result.jFullNumber.length));
-
+    console.log(
+        "Search source result: ",
+        results.map((result) => result.jFullNumber.length),
+    );
 
     // 1. 合并 + 去重
     const jFullNumbers = [
-        ...new Set(results.flatMap(item => item.jFullNumber))
+        ...new Set(results.flatMap((item) => item.jFullNumber)),
     ];
-    console.log(`Search rough result: ${jFullNumbers.length}`);
 
+    console.log(`Search rough result: ${jFullNumbers.length}`);
+    console.log(jFullNumbers);
 
     // 2. 并发拉详情
     const entries = await Promise.all(
@@ -33,7 +42,7 @@ export default async (params: RemoteSearchParams): Promise<RespWorks> => {
             const meta = await fetchWorkMeta(jnum);
             const info = fullFillWorkInfo(meta);
             return [jnum, info] as const;
-        })
+        }),
     );
 
     console.log(`Search workmeta result: ${entries.length}`);
@@ -42,28 +51,44 @@ export default async (params: RemoteSearchParams): Promise<RespWorks> => {
 
     // 3. 拼 works（如果你需要）
     let works: WorkInfo[] = jFullNumbers
-        .map(jnum => jInfo[jnum])
+        .map((jnum) => jInfo[jnum])
         .filter(Boolean)
         // 选定分类筛选
-        .filter(work => {
-            if (params.searchType == "va" || params.searchType == "circle" || params.searchType == "tag") {
+        .filter((work) => {
+            if (
+                params.searchType == "va" ||
+                params.searchType == "circle" ||
+                params.searchType == "tag"
+            ) {
                 for (const v of work.vas) {
-                    const raw = objCoder.decode<SearchWorkIdObj>(v.id as ObjEncoded<SearchWorkIdObj>)
-                    if (raw.t == params.searchType && raw.v == params.searchKeyword) return true
+                    const raw = objCoder.decode<SearchWorkIdObj>(
+                        v.id as ObjEncoded<SearchWorkIdObj>,
+                    );
+                    if (
+                        raw.t == params.searchType &&
+                        raw.v == params.searchKeyword
+                    )
+                        return true;
                 }
-                return false
+                return false;
             }
-            return true
+            return true;
         })
         // CV单人限定筛选
-        .filter(work => {
+        .filter((work) => {
             if (params.searchType == "va" && params.subtitle) {
                 for (const v of work.vas) {
-                    const raw = objCoder.decode<SearchWorkIdObj>(v.id as ObjEncoded<SearchWorkIdObj>)
-                    if (raw.t == params.searchType && raw.v != params.searchKeyword) return false
+                    const raw = objCoder.decode<SearchWorkIdObj>(
+                        v.id as ObjEncoded<SearchWorkIdObj>,
+                    );
+                    if (
+                        raw.t == params.searchType &&
+                        raw.v != params.searchKeyword
+                    )
+                        return false;
                 }
             }
-            return true
+            return true;
         })
         // 4. 重排序
         .sort((a, b) => {
@@ -73,60 +98,63 @@ export default async (params: RemoteSearchParams): Promise<RespWorks> => {
                 case "release":
                 case "created_at":
                 case "updated_at":
-                    c = new Date(a.create_date).getTime()
-                    d = new Date(b.create_date).getTime()
-                    break
+                    c = new Date(a.create_date).getTime();
+                    d = new Date(b.create_date).getTime();
+                    break;
                 case "userRating":
                 case "rate_average_2dp":
                 case "post_views":
                 case "rating":
-                    c = a.rate_average_2dp
-                    d = b.rate_average_2dp
-                    break
+                    c = a.rate_average_2dp;
+                    d = b.rate_average_2dp;
+                    break;
                 case "dl_count":
-                    c = a.dl_count
-                    d = b.dl_count
-                    break
+                    c = a.dl_count;
+                    d = b.dl_count;
+                    break;
                 case "price":
-                    c = a.price
-                    d = b.price
-                    break
+                    c = a.price;
+                    d = b.price;
+                    break;
                 case "review_count":
-                    c = a.rate_count
-                    d = b.rate_count
-                    break
+                    c = a.rate_count;
+                    d = b.rate_count;
+                    break;
                 case "id":
-                    c = a.id
-                    d = b.id
-                    break
+                    c = a.id;
+                    d = b.id;
+                    break;
                 case "nsfw":
-                    c = a.age_category
-                    d = b.age_category
-                    break
+                    c = a.age_category;
+                    d = b.age_category;
+                    break;
                 case "random":
-                    c = Math.random()
-                    d = Math.random()
-                    break
+                    c = Math.random();
+                    d = Math.random();
+                    break;
                 default:
                     break;
             }
 
             switch (params.sort) {
                 case "asc":
-                    return (c || 0) - (d || 0)
+                    return (c || 0) - (d || 0);
                 case "desc":
-                    return (d || 0) - (c || 0)
+                    return (d || 0) - (c || 0);
                 default:
-                    return 0
+                    return 0;
             }
-        })
+        });
 
     // Full jNumber matching
     if (params.searchType == "keyword") {
         for (const work of works) {
-            if (params.searchKeyword?.toUpperCase() == work.source_id.toUpperCase()) {
-                works.unshift(work)
-                break
+            if (
+                params.searchKeyword?.toUpperCase() ==
+                work.source_id.toUpperCase()
+            ) {
+                works.unshift(work);
+                break;
             }
         }
     }
@@ -139,7 +167,13 @@ export default async (params: RemoteSearchParams): Promise<RespWorks> => {
             // pageSize: results.reduce((sum, item) => sum + item.size, 0),
             // totalCount: results.reduce((sum, item) => sum + item.total, 0),
             pageSize: 0,
-            totalCount: results.reduce((sum, item) => sum + item.jFullNumber.length, 0) > 0 ? 1 : 0
+            totalCount:
+                results.reduce(
+                    (sum, item) => sum + item.jFullNumber.length,
+                    0,
+                ) > 0
+                    ? 1
+                    : 0,
         },
         works,
     };

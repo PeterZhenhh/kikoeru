@@ -137,7 +137,7 @@ export const searchAllInPage = async (
         .map((_, el) => {
             const text = $(el).text();
 
-            const jFullNum = text.match(/[RBV]J\d+/i)?.[0] as WorkFullNumber;
+            const jFullNum = text.match(/[RBV]J\d+/i)?.[0].toUpperCase() as WorkFullNumber;
             if (!jFullNum) return null;
 
             const href = $(el).find("h2.entry-title a").attr("href");

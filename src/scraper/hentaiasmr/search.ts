@@ -114,7 +114,7 @@ const all = async (
     const rjCodes = $(".rjcodes")
         .map((_, el) => {
             const text = $(el).text();
-            const matches = text.match(/[RBV]J\d+/i)?.[0] as WorkFullNumber;
+            const matches = text.match(/[RBV]J\d+/i)?.[0].toUpperCase() as WorkFullNumber;
             return matches ?? null;
         })
         .get()
