@@ -52,7 +52,7 @@ let servers = Array.from(PORTS, (port, i) => {
     },
     websocket: websocket,
   });
-  console.info(`[SYS] Web & WebSocket relay service started listening on ${hostname}:${port} (Bun on Vercel)`);
+  console.info(`[SYS] uni-kikoeru service started listening on ${hostname}:${port} (Bun on Vercel)`);
   return server
 })
 

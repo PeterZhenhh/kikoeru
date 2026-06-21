@@ -3,7 +3,7 @@ import type { RawNode } from "./tracks"
 import subConf from "./calSubConf"
 
 export default async (fileHashObj: TrackFileHash): Promise<TrackFileHash | null> => {
-    if (fileHashObj.source != "asmrone") return null
+    if (fileHashObj.source != "asmrone" || fileHashObj.type != "audio") return null
     const [JNum, fileId] = fileHashObj.id.split("/")
     if (!fileId) return null
     let trackInfoTree: RawNode[]

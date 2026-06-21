@@ -1,4 +1,4 @@
-import type { ObjEncoded, RemoteSearchParams, RespWorks, SearchWorkParam, WorkInfo } from "@/types/api";
+import type { ObjEncoded, RemoteSearchParams, RespWorks, SearchWorkIdObj, WorkInfo } from "@/types/api";
 import { search as search_jasmr } from "./jasmr";
 import { search as search_hentaiasmr } from "./hentaiasmr";
 import { search as search_japaneseasmr } from "./japaneseasmr";
@@ -17,7 +17,7 @@ export default async (params: RemoteSearchParams): Promise<RespWorks> => {
     ]
 
     const results = await Promise.all(dataSources);
-    console.log("Search source result: ",results.map(result => result.jFullNumber.length));
+    console.log("Search source result: ", results.map(result => result.jFullNumber.length));
 
 
     // 1. 合并 + 去重
@@ -48,7 +48,7 @@ export default async (params: RemoteSearchParams): Promise<RespWorks> => {
         .filter(work => {
             if (params.searchType == "va" || params.searchType == "circle" || params.searchType == "tag") {
                 for (const v of work.vas) {
-                    const raw = objCoder.decode<SearchWorkParam>(v.id as ObjEncoded<SearchWorkParam>)
+                    const raw = objCoder.decode<SearchWorkIdObj>(v.id as ObjEncoded<SearchWorkIdObj>)
                     if (raw.t == params.searchType && raw.v == params.searchKeyword) return true
                 }
                 return false
@@ -59,7 +59,7 @@ export default async (params: RemoteSearchParams): Promise<RespWorks> => {
         .filter(work => {
             if (params.searchType == "va" && params.subtitle) {
                 for (const v of work.vas) {
-                    const raw = objCoder.decode<SearchWorkParam>(v.id as ObjEncoded<SearchWorkParam>)
+                    const raw = objCoder.decode<SearchWorkIdObj>(v.id as ObjEncoded<SearchWorkIdObj>)
                     if (raw.t == params.searchType && raw.v != params.searchKeyword) return false
                 }
             }

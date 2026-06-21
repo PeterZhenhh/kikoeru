@@ -1,4 +1,4 @@
-import codeMapping from "./codeMapping.json" with { type: "json" };
+import codeMapping from "../types/codeMapping"
 const invMap = (obj: Record<string, any>) => {
     return Object.fromEntries(
         Object.entries(obj).map(([k, v]) => [v, k])

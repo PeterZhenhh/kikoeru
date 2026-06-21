@@ -1,4 +1,5 @@
 import type { TrackRespFunc, BaseTrackFile } from "@/types/api"
+import type { WorkFullNumber } from "@/types/workMeta";
 import { tracks as tracks_jasmr } from "./jasmr";
 import { tracks as tracks_hentaiasmr } from "./hentaiasmr";
 import { tracks as tracks_japaneseasmr } from "./japaneseasmr";
@@ -29,7 +30,7 @@ export default async ({ jFullNumber }: TrackRespFunc['params']): Promise<TrackRe
 
     function convertTrack(
         track: BaseTrackFile,
-        jFullNumber: string
+        jFullNumber: WorkFullNumber
     ): TrackRespFunc["result"] {
         if (track.type === "folder") {
             return {

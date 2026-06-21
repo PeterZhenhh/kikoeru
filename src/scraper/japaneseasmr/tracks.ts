@@ -1,6 +1,7 @@
 import type { BaseTrackFile, TrackRespFunc } from "@/types/api"
 import type { AppEnv } from "../../types/hono.ts";
 import { tryGetContext } from 'hono/context-storage'
+import * as objCoder from "../../utils/objCoder.ts"
 async function exists(url: URL["href"]): Promise<boolean> {
     try {
         const res = await fetch(url, {
@@ -37,9 +38,10 @@ export const tracks = async ({ jFullNumber }: TrackRespFunc['params']): Promise<
 
     if (await exists(m3u8)) {
         result.push({
-            type:"audio",
+            type: "audio",
             fileName: `${rj.toUpperCase()}_japaneseasmr.m3u8`,
             fileUrl: `${tryGetContext<AppEnv>()?.env?.rprx_v_japaneseasmr || "https://v.weeab0o.xyz"}/${rj.toUpperCase()}.m3u8`,
+            hash: objCoder.encode({ source: "japaneseasmr", type: "audio", id: jFullNumber })
         });
         return result;
     }
@@ -49,9 +51,10 @@ export const tracks = async ({ jFullNumber }: TrackRespFunc['params']): Promise<
 
     if (await exists(firstMp3)) {
         result.push({
-            type:"audio",
+            type: "audio",
             fileName: `${rj.toUpperCase()}_1_japaneseasmr.mp3`,
             fileUrl: `${tryGetContext<AppEnv>()?.env?.rprx_v_japaneseasmr || "https://v.weeab0o.xyz"}/${rj.toUpperCase()}.mp3`,
+            hash: objCoder.encode({ source: "japaneseasmr", type: "audio", id: jFullNumber })
         });
     } else {
         return null
@@ -66,9 +69,10 @@ export const tracks = async ({ jFullNumber }: TrackRespFunc['params']): Promise<
         }
 
         result.push({
-            type:"audio",
+            type: "audio",
             fileName: `${rj.toUpperCase()}_${i}_japaneseasmr.mp3`,
             fileUrl: `${tryGetContext<AppEnv>()?.env?.rprx_v_japaneseasmr || "https://v.weeab0o.xyz"}/${rj.toUpperCase()} ${i}.mp3`,
+            hash: objCoder.encode({ source: "japaneseasmr", type: "audio", id: jFullNumber })
         });
     }
 

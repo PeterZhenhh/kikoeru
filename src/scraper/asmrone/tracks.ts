@@ -67,7 +67,7 @@ function toBaseTrackFiles(nodes: RawNode[]): BaseTrackFile[] {
             ).href,
             duration: node.duration,
             size: node.size,
-            hash: objCoder.encode({ source: "asmrone", id: node.hash } as TrackFileHash)
+            hash: objCoder.encode({ source: "asmrone", id: node.hash, type: "audio" } as TrackFileHash)
         }]
     }).sort((a, b) => a.fileName > b.fileName ? 1 : -1)
 }

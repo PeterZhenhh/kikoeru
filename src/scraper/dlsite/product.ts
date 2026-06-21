@@ -1,5 +1,5 @@
-import type { WorkMeta } from "@/types/workMeta"
-import type { SearchWorkParam, WorkInfo } from "@/types/api";
+import type { WorkFullNumber, WorkMeta } from "@/types/workMeta"
+import type { SearchWorkIdObj, WorkInfo } from "@/types/api";
 import type { AppEnv } from "../../types/hono.ts";
 import { tryGetContext } from 'hono/context-storage'
 import * as jNumCoder from "../../utils/jNumCoder"
@@ -18,11 +18,11 @@ const getRemoteDomain = () => {
     return tryGetContext<AppEnv>()?.env?.rprx_dlsite || "https://www.dlsite.com"
 }
 
-export const fetchWorkMeta = async (jFullNumber: string): Promise<WorkMeta> => {
+export const fetchWorkMeta = async (jFullNumber: WorkFullNumber): Promise<WorkMeta> => {
     return (await fetchWorkMeta1(jFullNumber)) ?? (await fetchWorkMeta2(jFullNumber)) ?? ({ jFullNumber }) as WorkMeta
 }
 
-export const fetchWorkMeta1 = async (jFullNumber: string): Promise<WorkMeta | null> => {
+export const fetchWorkMeta1 = async (jFullNumber: WorkFullNumber): Promise<WorkMeta | null> => {
     let rawData: Record<string, any> = ({ jFullNumber })
     let retData = ({ jFullNumber }) as WorkMeta
     try {
@@ -79,13 +79,13 @@ export const fetchWorkMeta1 = async (jFullNumber: string): Promise<WorkMeta | nu
             source_type: "DLSITE"
         }) as WorkMeta["language_editions"][number]),
         tags: (rawData.genres || []).map((genre: genres) => ({
-            id: objCoder.encode({ t: "tag", v: genre.name_base } as SearchWorkParam), name: genre.name || genre.name_base
+            id: objCoder.encode({ t: "tag", v: genre.name_base } as SearchWorkIdObj), name: genre.name || genre.name_base
         }) as WorkMeta["tags"][number])
     }
     return retData
 }
 
-export const fetchWorkMeta2 = async (jFullNumber: string): Promise<WorkMeta | null> => {
+export const fetchWorkMeta2 = async (jFullNumber: WorkFullNumber): Promise<WorkMeta | null> => {
     let rawData: Record<string, any> = ({ jFullNumber })
     let retData = ({ jFullNumber }) as WorkMeta
     try {
@@ -108,7 +108,7 @@ export const fetchWorkMeta2 = async (jFullNumber: string): Promise<WorkMeta | nu
     }
 
     retData = {
-        jFullNumber: jFullNumber.toUpperCase(),
+        jFullNumber: jFullNumber.toUpperCase() as WorkFullNumber,
         age_category: rawData.age_category || 0,
         rate_average_2dp: rawData.rate_average_2dp || 0,
         dl_count: rawData.dl_count || 0,
@@ -150,8 +150,8 @@ export const fullFillWorkInfo = ({ jFullNumber, workTitle = "", circleName = "\0
         has_subtitle: false,
         create_date: releaseDate,
         vas: [
-            ...vas.map(va => ({ id: objCoder.encode({ t: "va", v: va } as SearchWorkParam), name: `🎙️${va}` })),
-            { id: objCoder.encode({ t: "circle", v: circleName } as SearchWorkParam), name: `🌐${circleName}` },
+            ...vas.map(va => ({ id: objCoder.encode({ t: "va", v: va } as SearchWorkIdObj), name: `🎙️${va}` })),
+            { id: objCoder.encode({ t: "circle", v: circleName } as SearchWorkIdObj), name: `🌐${circleName}` },
             ...tags
         ],
         tags: [],
